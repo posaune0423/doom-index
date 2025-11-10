@@ -1,0 +1,79 @@
+/**
+ * Environment Configuration
+ *
+ * Type-safe environment variable management using T3 Env
+ * @see https://env.t3.gg/docs/nextjs
+ */
+
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
+
+export const env = createEnv({
+  /**
+   * Server-side environment variables
+   * These are only available on the server and will not be bundled to the client
+   */
+  server: {
+    // Image Provider API Keys
+    OPENAI_API_KEY: z.string().optional(),
+    REPLICATE_API_KEY: z.string().optional(),
+    RUNWARE_API_KEY: z.string().optional(),
+
+    // Vercel Blob Storage
+    BLOB_READ_WRITE_TOKEN: z.string().optional(),
+
+    // Node Environment
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  },
+
+  /**
+   * Client-side environment variables
+   * These must be prefixed with NEXT_PUBLIC_ and will be bundled to the client
+   */
+  client: {
+    // Currently no client-side env vars
+  },
+
+  /**
+   * Shared environment variables
+   * These can be used on both client and server
+   */
+  shared: {
+    // Image Generation Provider
+    // "smart" automatically selects the appropriate provider based on the model
+    // Note: "mock" is for testing only
+    IMAGE_PROVIDER: z.enum(["ai-sdk", "runware-sdk", "smart"]).default("smart"),
+
+    // Prompt Template
+    PROMPT_TEMPLATE: z.enum(["default", "experimental"]).default("default"),
+  },
+
+  /**
+   * Runtime environment variables
+   * For Next.js >= 13.4.4, we need to manually destructure all variables
+   */
+  runtimeEnv: {
+    // Server
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    REPLICATE_API_KEY: process.env.REPLICATE_API_KEY,
+    RUNWARE_API_KEY: process.env.RUNWARE_API_KEY,
+    BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
+    NODE_ENV: process.env.NODE_ENV,
+
+    // Shared
+    IMAGE_PROVIDER: process.env.IMAGE_PROVIDER,
+    PROMPT_TEMPLATE: process.env.PROMPT_TEMPLATE,
+  },
+
+  /**
+   * Skip validation during build if set to "1"
+   * Useful for Docker builds or CI where env vars are not available
+   */
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+
+  /**
+   * Makes it so that empty strings are treated as undefined
+   * Useful for optional environment variables
+   */
+  emptyStringAsUndefined: true,
+});
