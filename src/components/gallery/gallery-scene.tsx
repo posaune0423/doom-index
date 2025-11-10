@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { ACESFilmicToneMapping, PCFSoftShadowMap } from "three";
+import { ACESFilmicToneMapping, DoubleSide, PCFSoftShadowMap } from "three";
 import { OrbitControls, Grid, Stats } from "@react-three/drei";
 import { Lights } from "./lights";
 import { FramedPainting } from "./framed-painting";
@@ -21,6 +22,8 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
   cameraPreset = "painting",
   showDashboard = true,
 }) => {
+  const [isDashboardHelpOpen, setIsDashboardHelpOpen] = useState(false);
+
   return (
     <Canvas
       shadows
@@ -66,6 +69,7 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
         rotateSpeed={1.0}
         zoomSpeed={1.0}
         panSpeed={0.5}
+        enabled={!isDashboardHelpOpen}
         enableRotate={true}
         mouseButtons={{
           LEFT: 0, // ROTATE
@@ -100,30 +104,36 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
       <group>
         {/* Floor */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]} receiveShadow>
-          <planeGeometry args={[7, 7]} />
-          <meshStandardMaterial color="#4b4d68" roughness={0.48} metalness={0.26} />
+          <planeGeometry args={[10, 10]} />
+          <meshStandardMaterial color="#4b4d68" roughness={0.48} metalness={0.26} side={DoubleSide} />
         </mesh>
 
         {/* Back wall */}
-        <mesh position={[0, 1.65, 3.4]} receiveShadow>
-          <planeGeometry args={[7, 4.5]} />
-          <meshStandardMaterial color="#5c5d79" roughness={0.84} metalness={0.11} />
+        <mesh position={[0, 1.65, 5]} rotation={[0, Math.PI, 0]} receiveShadow>
+          <planeGeometry args={[10, 4.5]} />
+          <meshStandardMaterial color="#5c5d79" roughness={0.84} metalness={0.11} side={DoubleSide} />
         </mesh>
 
         {/* Side walls */}
-        <mesh rotation={[0, Math.PI / 2, 0]} position={[3.5, 1.65, 0]} receiveShadow>
-          <planeGeometry args={[7, 4.5]} />
-          <meshStandardMaterial color="#585a76" roughness={0.84} metalness={0.11} />
+        <mesh rotation={[0, -Math.PI / 2, 0]} position={[5, 1.65, 0]} receiveShadow>
+          <planeGeometry args={[10, 4.5]} />
+          <meshStandardMaterial color="#585a76" roughness={0.84} metalness={0.11} side={DoubleSide} />
         </mesh>
-        <mesh rotation={[0, -Math.PI / 2, 0]} position={[-3.5, 1.65, 0]} receiveShadow>
-          <planeGeometry args={[7, 4.5]} />
-          <meshStandardMaterial color="#585a76" roughness={0.84} metalness={0.11} />
-      </mesh>
+        <mesh rotation={[0, Math.PI / 2, 0]} position={[-5, 1.65, 0]} receiveShadow>
+          <planeGeometry args={[10, 4.5]} />
+          <meshStandardMaterial color="#585a76" roughness={0.84} metalness={0.11} side={DoubleSide} />
+        </mesh>
+
+        {/* Front wall */}
+        <mesh position={[0, 1.65, -5]} receiveShadow>
+          <planeGeometry args={[10, 4.5]} />
+          <meshStandardMaterial color="#585a76" roughness={0.84} metalness={0.11} side={DoubleSide} />
+        </mesh>
 
         {/* Ceiling */}
         <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 3.3, 0]} receiveShadow>
           <planeGeometry args={[7, 7]} />
-          <meshStandardMaterial color="#2d2d40" roughness={0.72} metalness={0.14} />
+          <meshStandardMaterial color="#2d2d40" roughness={0.72} metalness={0.14} side={DoubleSide} />
         </mesh>
       </group>
 
@@ -131,7 +141,7 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
       <FramedPainting thumbnailUrl={thumbnailUrl} />
 
       {/* Dashboard */}
-      {showDashboard && <RealtimeDashboard />}
+      {showDashboard && <RealtimeDashboard isHelpOpen={isDashboardHelpOpen} onHelpToggle={setIsDashboardHelpOpen} />}
 
       {/* Performance stats - Development only */}
       {isDevelopment && <Stats />}

@@ -172,9 +172,7 @@ export default async function Image(): Promise<ImageResponse> {
       {
         ...size,
         headers: {
-          "Cache-Control": fallbackUsed
-            ? "public, max-age=300"
-            : "public, max-age=60, stale-while-revalidate=30",
+          "Cache-Control": fallbackUsed ? "public, max-age=300" : "public, max-age=60, stale-while-revalidate=30",
         },
       },
     );

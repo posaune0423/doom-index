@@ -8,9 +8,5 @@ import { env } from "@/env";
  */
 export function getBaseUrl(): string {
   const baseUrl = env.NEXT_PUBLIC_BASE_URL;
-  if (!baseUrl || baseUrl.length === 0) {
-    return "http://localhost:8787";
-  }
-
-  return baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+  return baseUrl;
 }

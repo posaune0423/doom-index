@@ -28,5 +28,7 @@ body {
   overflow: hidden;
   background: #000000;
   color: var(--foreground);
-  font-family: Cinzel Decorative, serif;
+  font-family:
+    Cinzel Decorative,
+    serif;
 }

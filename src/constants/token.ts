@@ -38,56 +38,56 @@ const DEFAULT_NORMALIZATION: TokenNormalizationWindow = { min: 0, max: 2_000_000
 export const TOKENS: TokenConfig[] = [
   {
     ticker: "CO2",
-    address: "Cy1GS2FqefgaMbi45UunrUzin1rfEmTUYnomddzBpump",
+    address: "Cy1GS2FqefgaMbi45UunrUzin1rfEmTUYnomddzBpump", // https://pump.fun/token/Cy1GS2FqefgaMbi45UunrUzin1rfEmTUYnomddzBpump
     supply: 1_000_000_000,
     axes: ["fogDensity", "skyTint"],
     normalization: DEFAULT_NORMALIZATION,
   },
   {
     ticker: "ICE",
-    address: "eL5fUxj2J4CiQsmW85k5FG9DvuQjjUoBHoQBi2Kpump",
+    address: "eL5fUxj2J4CiQsmW85k5FG9DvuQjjUoBHoQBi2Kpump", // https://pump.fun/token/eL5fUxj2J4CiQsmW85k5FG9DvuQjjUoBHoQBi2Kpump
     supply: 1_000_000_000,
     axes: ["reflectivity", "blueBalance"],
     normalization: DEFAULT_NORMALIZATION,
   },
   {
     ticker: "FOREST",
-    address: "DKu9kykSfbN5LBfFXtNNDPaX35o4Fv6vJ9FKk7pZpump",
+    address: "DKu9kykSfbN5LBfFXtNNDPaX35o4Fv6vJ9FKk7pZpump", // https://pump.fun/token/DKu9kykSfbN5LBfFXtNNDPaX35o4Fv6vJ9FKk7pZpump
     supply: 1_000_000_000,
     axes: ["vegetationDensity", "organicPattern"],
     normalization: DEFAULT_NORMALIZATION,
   },
   {
     ticker: "NUKE",
-    address: "8gHPxqgHj6JQ2sQtMSghQYVN5qRP8wm5T6HNejuwpump",
+    address: "8gHPxqgHj6JQ2sQtMSghQYVN5qRP8wm5T6HNejuwpump", // https://pump.fun/coin/8gHPxqgHj6JQ2sQtMSghQYVN5qRP8wm5T6HNejuwpump
     supply: 1_000_000_000,
     axes: ["radiationGlow", "debrisIntensity"],
     normalization: DEFAULT_NORMALIZATION,
   },
   {
     ticker: "MACHINE",
-    address: "2u3ufZ5defxwPXMixvvQpSs68PDNzHTdE52t9Crspump",
+    address: "2u3ufZ5defxwPXMixvvQpSs68PDNzHTdE52t9Crspump", // https://pump.fun/coin/2u3ufZ5defxwPXMixvvQpSs68PDNzHTdE52t9Crspump
     supply: 1_000_000_000,
     axes: ["mechanicalPattern", "metallicRatio"],
     normalization: DEFAULT_NORMALIZATION,
   },
   {
     ticker: "PANDEMIC",
-    address: "CXcWiHFDM1J8RHfAuzor1YGSk6BxGKFY5kstjUZjpump",
+    address: "CXcWiHFDM1J8RHfAuzor1YGSk6BxGKFY5kstjUZjpump", // https://pump.fun/coin/CXcWiHFDM1J8RHfAuzor1YGSk6BxGKFY5kstjUZjpump
     supply: 1_000_000_000,
     axes: ["fractalDensity", "bioluminescence"],
     normalization: DEFAULT_NORMALIZATION,
   },
   {
     ticker: "FEAR",
-    address: "6W8FHYE6jnw1dktabRRiZpQRQFPSFhTeLczdvBNPzVeo",
+    address: "6W8FHYE6jnw1dktabRRiZpQRQFPSFhTeLczdvBNPzVeo", // https://pump.fun/coin/6W8FHYE6jnw1dktabRRiZpQRQFPSFhTeLczdvBNPzVeo
     supply: 1_000_000_000,
     axes: ["shadowDepth", "redHighlight"],
     normalization: DEFAULT_NORMALIZATION,
   },
   {
     ticker: "HOPE",
-    address: "GnM6XZ7DN9KSPW2ZVMNqCggsxjnxHMGb2t4kiWrUpump",
+    address: "GnM6XZ7DN9KSPW2ZVMNqCggsxjnxHMGb2t4kiWrUpump", // https://pump.fun/coin/GnM6XZ7DN9KSPW2ZVMNqCggsxjnxHMGb2t4kiWrUpump
     supply: 1_000_000_000,
     axes: ["lightIntensity", "warmHue"],
     normalization: DEFAULT_NORMALIZATION,

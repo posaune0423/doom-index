@@ -24,32 +24,45 @@ const cinzelDecorative = Cinzel_Decorative({
 export async function generateMetadata(): Promise<Metadata> {
   const description =
     "8 global indicators ($CO2, $ICE, $FOREST, $NUKE, $MACHINE, $PANDEMIC, $FEAR, $HOPE) visualized as generative art in real-time.";
+  const title = "DOOM INDEX - Every buy paints the apocalypse.";
+  const metadataBase = new URL(env.NEXT_PUBLIC_BASE_URL);
+  const ogImageUrl = new URL("/opengraph-image", metadataBase).toString();
+  const ogImageAlt = "DOOM INDEX - Current Every buy paints the apocalypse.";
 
   return {
-    metadataBase: new URL(env.NEXT_PUBLIC_BASE_URL),
-    title: "DOOM INDEX - Every buy paints the apocalypse.",
+    metadataBase,
+    title,
     description,
     openGraph: {
       type: "website",
       siteName: "DOOM INDEX",
       locale: "en_US",
-      title: "DOOM INDEX - Every buy paints the apocalypse.",
+      title,
       description,
+      url: metadataBase,
       images: [
         {
-          url: "/opengraph-image",
+          url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: "DOOM INDEX - Current Every buy paints the apocalypse.",
+          alt: ogImageAlt,
+          type: "image/png",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
       site: "@doomindex",
-      title: "DOOM INDEX - Every buy paints the apocalypse.",
+      title,
       description,
-      images: ["/opengraph-image"],
+      images: [
+        {
+          url: ogImageUrl,
+          alt: ogImageAlt,
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
   };
 }

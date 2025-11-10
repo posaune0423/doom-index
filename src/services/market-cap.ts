@@ -142,11 +142,12 @@ export function createMarketCapService({
   }
 
   async function getMcMap(): Promise<Result<McMap, AppError>> {
-    const entries: [TokenTicker, number][] = [];
-    for (const token of tokens) {
-      const mc = await fetchTokenPrice(token);
-      entries.push([token.ticker, mc]);
-    }
+    const entries = await Promise.all(
+      tokens.map(async token => {
+        const mc = await fetchTokenPrice(token);
+        return [token.ticker, mc] as [TokenTicker, number];
+      }),
+    );
     return ok(Object.fromEntries(entries) as McMap);
   }
 

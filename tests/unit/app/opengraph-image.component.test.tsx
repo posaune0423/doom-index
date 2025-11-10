@@ -207,9 +207,7 @@ describe("OGP Image Generation Components", () => {
 
   describe("Image Data URL Rendering", () => {
     test("should render image with data URL source", () => {
-      const DataUrlImage = () => (
-        <img src="data:image/webp;base64,dGVzdA==" alt="Test" data-testid="data-url-image" />
-      );
+      const DataUrlImage = () => <img src="data:image/webp;base64,dGVzdA==" alt="Test" data-testid="data-url-image" />;
 
       const { getByTestId } = render(<DataUrlImage />);
 
@@ -326,18 +324,14 @@ describe("OGP Image Generation Components", () => {
   describe("Cache Control Headers Logic", () => {
     test("should determine correct cache headers for successful image", () => {
       const fallbackUsed = false;
-      const cacheControl = fallbackUsed
-        ? "public, max-age=300"
-        : "public, max-age=60, stale-while-revalidate=30";
+      const cacheControl = fallbackUsed ? "public, max-age=300" : "public, max-age=60, stale-while-revalidate=30";
 
       expect(cacheControl).toBe("public, max-age=60, stale-while-revalidate=30");
     });
 
     test("should determine correct cache headers for fallback", () => {
       const fallbackUsed = true;
-      const cacheControl = fallbackUsed
-        ? "public, max-age=300"
-        : "public, max-age=60, stale-while-revalidate=30";
+      const cacheControl = fallbackUsed ? "public, max-age=300" : "public, max-age=60, stale-while-revalidate=30";
 
       expect(cacheControl).toBe("public, max-age=300");
     });
