@@ -1,73 +1,53 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cinzel_Decorative } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/components/providers/query-provider";
-import { getJsonFromPublicUrl } from "@/lib/r2";
-import { logger } from "@/utils/logger";
 import { env } from "@/env";
-import type { GlobalState } from "@/types/domain";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const cinzelDecorative = Cinzel_Decorative({
+  variable: "--font-cinzel-decorative",
+  weight: ["400", "700", "900"],
+  style: ["normal"],
+  display: "swap",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  preload: true,
+  fallback: ["serif"],
+  adjustFontFallback: true,
 });
 
 /**
- * Generate dynamic metadata with OGP image
+ * Generate metadata with OGP image
+ *
+ * Using generateMetadata() to ensure environment variables are available at runtime.
+ * Fallback to production URL if NEXT_PUBLIC_BASE_URL is not set.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  // Fetch state for enhanced metadata (optional)
-  const stateUrl = `${env.R2_PUBLIC_DOMAIN}/state/global.json`;
-  const stateResult = await getJsonFromPublicUrl<GlobalState>(stateUrl);
-
-  let description =
+  const description =
     "8 global indicators ($CO2, $ICE, $FOREST, $NUKE, $MACHINE, $PANDEMIC, $FEAR, $HOPE) visualized as generative art in real-time.";
 
-  if (stateResult.isOk() && stateResult.value) {
-    const state = stateResult.value;
-    if (state.lastTs) {
-      const lastUpdate = new Date(state.lastTs).toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      description = `Last updated: ${lastUpdate}. ${description}`;
-    }
-  } else {
-    logger.warn("metadata.state-fetch-failed", {
-      url: stateUrl,
-      error: stateResult.isErr() ? stateResult.error.message : "Unknown error",
-    });
-  }
-
   return {
-    title: "DOOM INDEX - World State Visualization",
+    metadataBase: new URL(env.NEXT_PUBLIC_BASE_URL),
+    title: "DOOM INDEX - Every buy paints the apocalypse.",
     description,
     openGraph: {
       type: "website",
       siteName: "DOOM INDEX",
       locale: "en_US",
-      title: "DOOM INDEX - World State Visualization",
+      title: "DOOM INDEX - Every buy paints the apocalypse.",
       description,
       images: [
         {
           url: "/opengraph-image",
           width: 1200,
           height: 630,
-          alt: "DOOM INDEX - Current world state visualization",
+          alt: "DOOM INDEX - Current Every buy paints the apocalypse.",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
       site: "@doomindex",
-      title: "DOOM INDEX - World State Visualization",
+      title: "DOOM INDEX - Every buy paints the apocalypse.",
       description,
       images: ["/opengraph-image"],
     },
@@ -92,7 +72,7 @@ export default function RootLayout({
   return (
     <html lang="en" style={{ margin: 0, padding: 0, width: "100%", height: "100%" }}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${cinzelDecorative.variable} antialiased`}
         style={{ margin: 0, padding: 0, width: "100%", height: "100%", overflow: "hidden" }}
       >
         <QueryProvider>{children}</QueryProvider>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { ACESFilmicToneMapping } from "three";
+import { ACESFilmicToneMapping, PCFSoftShadowMap } from "three";
 import { OrbitControls, Grid, Stats } from "@react-three/drei";
 import { Lights } from "./lights";
 import { FramedPainting } from "./framed-painting";
@@ -23,13 +23,21 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
 }) => {
   return (
     <Canvas
+      shadows
+      dpr={[1, 1.5]}
       camera={{
         fov: 50,
         position: [0, 0.8, 0.8],
         near: 0.1,
         far: 100,
       }}
-      gl={{ antialias: true, toneMapping: ACESFilmicToneMapping }}
+      gl={{ antialias: true }}
+      onCreated={({ gl }) => {
+        gl.shadowMap.enabled = true;
+        gl.shadowMap.type = PCFSoftShadowMap;
+        gl.toneMapping = ACESFilmicToneMapping;
+        gl.setClearColor("#050505");
+      }}
       style={{
         position: "fixed",
         top: 0,
@@ -88,11 +96,36 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
         </>
       )}
 
-      {/* Gallery Room - Smaller box with inside visible */}
-      <mesh position={[0, 1.5, 0]}>
-        <boxGeometry args={[6, 4, 6]} />
-        <meshStandardMaterial color="#2a2a2a" roughness={0.9} metalness={0.05} side={2} />
+      {/* Gallery architecture */}
+      <group>
+        {/* Floor */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]} receiveShadow>
+          <planeGeometry args={[7, 7]} />
+          <meshStandardMaterial color="#4b4d68" roughness={0.48} metalness={0.26} />
+        </mesh>
+
+        {/* Back wall */}
+        <mesh position={[0, 1.65, 3.4]} receiveShadow>
+          <planeGeometry args={[7, 4.5]} />
+          <meshStandardMaterial color="#5c5d79" roughness={0.84} metalness={0.11} />
+        </mesh>
+
+        {/* Side walls */}
+        <mesh rotation={[0, Math.PI / 2, 0]} position={[3.5, 1.65, 0]} receiveShadow>
+          <planeGeometry args={[7, 4.5]} />
+          <meshStandardMaterial color="#585a76" roughness={0.84} metalness={0.11} />
+        </mesh>
+        <mesh rotation={[0, -Math.PI / 2, 0]} position={[-3.5, 1.65, 0]} receiveShadow>
+          <planeGeometry args={[7, 4.5]} />
+          <meshStandardMaterial color="#585a76" roughness={0.84} metalness={0.11} />
       </mesh>
+
+        {/* Ceiling */}
+        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 3.3, 0]} receiveShadow>
+          <planeGeometry args={[7, 7]} />
+          <meshStandardMaterial color="#2d2d40" roughness={0.72} metalness={0.14} />
+        </mesh>
+      </group>
 
       {/* Central framed painting */}
       <FramedPainting thumbnailUrl={thumbnailUrl} />

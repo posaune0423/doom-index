@@ -10,10 +10,10 @@
  */
 
 import { describe, expect, test, mock, beforeEach } from "bun:test";
-import { getArtworkDataUrl, getPlaceholderDataUrl } from "@/app/opengraph-image";
+import { getArtworkDataUrl, getPlaceholderDataUrl, getFrameDataUrl } from "@/app/opengraph-image";
 
 describe("OGP Image Generation (Integration Tests)", () => {
-  const mockR2Domain = "https://test.r2.dev";
+  const mockBaseUrl = "http://test.example.com";
 
   beforeEach(() => {
     // Reset fetch mock before each test
@@ -34,7 +34,7 @@ describe("OGP Image Generation (Integration Tests)", () => {
         return new Response(null, { status: 404 });
       }) as unknown as typeof fetch;
 
-      const dataUrl = await getPlaceholderDataUrl(mockR2Domain);
+      const dataUrl = await getPlaceholderDataUrl(mockBaseUrl);
 
       expect(dataUrl).toStartWith("data:image/webp;base64,");
       expect(dataUrl.length).toBeGreaterThan(30);
@@ -46,7 +46,37 @@ describe("OGP Image Generation (Integration Tests)", () => {
         return new Response(null, { status: 404 });
       }) as unknown as typeof fetch;
 
-      await expect(getPlaceholderDataUrl(mockR2Domain)).rejects.toThrow("Failed to fetch placeholder: 404");
+      await expect(getPlaceholderDataUrl(mockBaseUrl)).rejects.toThrow("Failed to fetch placeholder: 404");
+    });
+  });
+
+  describe("getFrameDataUrl", () => {
+    test("should fetch and convert frame image to data URL", async () => {
+      // Mock successful frame fetch
+      global.fetch = mock(async (url: string) => {
+        if (url.includes("frame.webp")) {
+          const buffer = new TextEncoder().encode("mock frame image").buffer;
+          return new Response(buffer, {
+            status: 200,
+            headers: { "Content-Type": "image/webp" },
+          });
+        }
+        return new Response(null, { status: 404 });
+      }) as unknown as typeof fetch;
+
+      const dataUrl = await getFrameDataUrl(mockBaseUrl);
+
+      expect(dataUrl).toStartWith("data:image/webp;base64,");
+      expect(dataUrl.length).toBeGreaterThan(30);
+    });
+
+    test("should throw error when frame fetch fails", async () => {
+      // Mock failed fetch
+      global.fetch = mock(async () => {
+        return new Response(null, { status: 404 });
+      }) as unknown as typeof fetch;
+
+      await expect(getFrameDataUrl(mockBaseUrl)).rejects.toThrow("Failed to fetch frame: 404");
     });
   });
 
@@ -79,7 +109,7 @@ describe("OGP Image Generation (Integration Tests)", () => {
         return new Response(null, { status: 404 });
       }) as unknown as typeof fetch;
 
-      const result = await getArtworkDataUrl(mockR2Domain);
+      const result = await getArtworkDataUrl(mockBaseUrl);
 
       expect(result.fallbackUsed).toBe(false);
       expect(result.dataUrl).toStartWith("data:image/webp;base64,");
@@ -103,7 +133,7 @@ describe("OGP Image Generation (Integration Tests)", () => {
         return new Response(null, { status: 404 });
       }) as unknown as typeof fetch;
 
-      const result = await getArtworkDataUrl(mockR2Domain);
+      const result = await getArtworkDataUrl(mockBaseUrl);
 
       expect(result.fallbackUsed).toBe(true);
       expect(result.dataUrl).toStartWith("data:image/webp;base64,");
@@ -137,7 +167,7 @@ describe("OGP Image Generation (Integration Tests)", () => {
         return new Response(null, { status: 404 });
       }) as unknown as typeof fetch;
 
-      const result = await getArtworkDataUrl(mockR2Domain);
+      const result = await getArtworkDataUrl(mockBaseUrl);
 
       expect(result.fallbackUsed).toBe(true);
       expect(result.dataUrl).toStartWith("data:image/webp;base64,");
@@ -175,7 +205,7 @@ describe("OGP Image Generation (Integration Tests)", () => {
         return new Response(null, { status: 404 });
       }) as unknown as typeof fetch;
 
-      const result = await getArtworkDataUrl(mockR2Domain);
+      const result = await getArtworkDataUrl(mockBaseUrl);
 
       expect(result.fallbackUsed).toBe(true);
       expect(result.dataUrl).toStartWith("data:image/webp;base64,");
@@ -192,7 +222,7 @@ describe("OGP Image Generation (Integration Tests)", () => {
         });
       }) as unknown as typeof fetch;
 
-      const dataUrl = await getPlaceholderDataUrl(mockR2Domain);
+      const dataUrl = await getPlaceholderDataUrl(mockBaseUrl);
 
       // Verify data URL format
       expect(dataUrl).toMatch(/^data:image\/webp;base64,[A-Za-z0-9+/]+=*$/);
@@ -208,7 +238,7 @@ describe("OGP Image Generation (Integration Tests)", () => {
         });
       }) as unknown as typeof fetch;
 
-      const dataUrl = await getPlaceholderDataUrl(mockR2Domain);
+      const dataUrl = await getPlaceholderDataUrl(mockBaseUrl);
 
       expect(dataUrl).toStartWith("data:image/webp;base64,");
 

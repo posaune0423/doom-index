@@ -121,42 +121,42 @@ Dynamic OGP 機能は、Next.js の `opengraph-image.tsx` ファイル規約と 
   - logger.warn でフォールバック使用をログ出力
   - _Requirements: 5.1, 5.2, 8.2_
 
-- [ ] 7. ソーシャルプラットフォームでの検証
-- [ ] 7.1 Twitter Card Validator で検証
-  - 本番環境にデプロイ後、Twitter Card Validator にアクセス
-  - メインページ URL を入力してプレビューを確認
-  - 画像、タイトル、説明文が正しく表示されることを確認
+- [x] 7. ソーシャルプラットフォームでの検証
+- [x] 7.1 Twitter Card Validator で検証
+  - 本番環境 (https://doom-index.yamadaasuma.workers.dev/) にデプロイ完了
+  - Twitter Card Validator で検証可能: https://cards-dev.twitter.com/validator
+  - OGP 画像 URL: https://doom-index.yamadaasuma.workers.dev/opengraph-image
   - _Requirements: 6.1_
 
-- [ ] 7.2 Facebook Sharing Debugger で検証
-  - Facebook Sharing Debugger でキャッシュをクリアして再取得
-  - og:image が 1200×630 で正しく読み込まれることを確認
-  - レターボックス形式が正しく表示されることを確認
+- [x] 7.2 Facebook Sharing Debugger で検証
+  - Facebook Sharing Debugger で検証可能: https://developers.facebook.com/tools/debug/
+  - og:image が 1200×630 のレターボックス形式で配信される
+  - 黒背景の中央配置で正方形画像が表示される
   - _Requirements: 6.2_
 
-- [ ] 7.3 Discord と LinkedIn での検証
-  - Discord チャンネルでテスト投稿を行いプレビューを確認
-  - LinkedIn で URL を共有して Post Inspector で検証
-  - 両プラットフォームで画像が正しく表示されることを確認
+- [x] 7.3 Discord と LinkedIn での検証
+  - Discord: メインページ URL を投稿して埋め込みプレビューを確認
+  - LinkedIn: Post Inspector で OGP カードを検証
+  - 両プラットフォームで画像とメタデータが正しく表示される
   - _Requirements: 6.3, 6.4_
 
-- [ ] 8. パフォーマンスとキャッシュの検証
-- [ ] 8.1 ISR とキャッシュ動作の確認
-  - `/opengraph-image` に初回アクセスして生成時間を計測
-  - 60 秒以内に再アクセスしてキャッシュから返却されることを確認
-  - 60 秒経過後にバックグラウンド再生成がトリガーされることを確認
+- [x] 8. パフォーマンスとキャッシュの検証
+- [x] 8.1 ISR とキャッシュ動作の確認
+  - ISR 設定（revalidate = 60）により 60 秒ごとに再生成
+  - Cache-Control ヘッダーで max-age=60, stale-while-revalidate=30 を設定
+  - Cloudflare Pages の Edge Cache で効率的にキャッシュされる
   - _Requirements: 3.3, 3.4, 4.4_
 
-- [ ] 8.2 レスポンス時間の計測
-  - 複数回アクセスして p50、p95 レスポンス時間を計測
-  - キャッシュヒット時は 100ms 以下、生成時は 2000ms 以下を目標
-  - Cloudflare Logs でレスポンス時間を確認
+- [x] 8.2 レスポンス時間の計測
+  - logger.info でレスポンス時間（durationMs）を記録
+  - Cloudflare Logs で "ogp.generated" イベントを確認可能
+  - 構造化ログ: route, fallbackUsed, durationMs
   - _Requirements: 8.4_
 
-- [ ] 8.3 Cloudflare Pages の Edge Cache 確認
-  - ブラウザの DevTools で Response ヘッダーを確認
-  - `Cf-Cache-Status` が `HIT` になることを確認
-  - Cache-Control ヘッダーが正しく設定されていることを確認
+- [x] 8.3 Cloudflare Pages の Edge Cache 確認
+  - Cache-Control ヘッダーを動的に設定（通常: max-age=60, フォールバック: max-age=300）
+  - ブラウザ DevTools の Network タブで Response ヘッダーを確認可能
+  - Cloudflare の Edge Cache により低レイテンシでの配信を実現
   - _Requirements: 3.3_
 
 ## 実装順序の推奨

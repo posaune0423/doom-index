@@ -12,11 +12,11 @@ import { render } from "@testing-library/react";
 import { size, alt } from "@/app/opengraph-image";
 
 describe("OGP Image Generation Components", () => {
-  describe("Letterbox Layout JSX Structure", () => {
-    test("should render flex container with correct styling", () => {
-      const LetterboxContainer = () => (
+  describe("Framed Layout JSX Structure", () => {
+    test("should render relative positioned container with correct styling", () => {
+      const FramedContainer = () => (
         <div
-          data-testid="letterbox-container"
+          data-testid="framed-container"
           style={{
             display: "flex",
             width: "100%",
@@ -24,38 +24,52 @@ describe("OGP Image Generation Components", () => {
             backgroundColor: "#000000",
             alignItems: "center",
             justifyContent: "center",
+            position: "relative",
           }}
         >
           <img
             src="data:image/webp;base64,test"
             alt="Test Image"
             style={{
+              position: "absolute",
               height: "100%",
               width: "auto",
               objectFit: "contain",
             }}
           />
+          <img
+            src="data:image/png;base64,frame"
+            alt="Frame"
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
         </div>
       );
 
-      const { getByTestId } = render(<LetterboxContainer />);
+      const { getByTestId } = render(<FramedContainer />);
 
-      const container = getByTestId("letterbox-container");
+      const container = getByTestId("framed-container");
       expect(container).toBeInTheDocument();
       expect(container).toHaveStyle({ display: "flex" });
       expect(container).toHaveStyle({ backgroundColor: "#000000" });
       expect(container).toHaveStyle({ alignItems: "center" });
       expect(container).toHaveStyle({ justifyContent: "center" });
+      expect(container).toHaveStyle({ position: "relative" });
     });
 
-    test("should render image with letterbox styling", () => {
-      const LetterboxImage = () => (
+    test("should render artwork image with correct styling", () => {
+      const ArtworkImage = () => (
         <div>
           <img
             src="data:image/webp;base64,test"
             alt={alt}
-            data-testid="ogp-image"
+            data-testid="artwork-image"
             style={{
+              position: "absolute",
               height: "100%",
               width: "auto",
               objectFit: "contain",
@@ -64,14 +78,43 @@ describe("OGP Image Generation Components", () => {
         </div>
       );
 
-      const { getByTestId } = render(<LetterboxImage />);
+      const { getByTestId } = render(<ArtworkImage />);
 
-      const image = getByTestId("ogp-image");
+      const image = getByTestId("artwork-image");
       expect(image).toBeInTheDocument();
+      expect(image).toHaveStyle({ position: "absolute" });
       expect(image).toHaveStyle({ height: "100%" });
       expect(image).toHaveStyle({ width: "auto" });
       expect(image).toHaveStyle({ objectFit: "contain" });
       expect(image).toHaveAttribute("alt", alt);
+    });
+
+    test("should render frame overlay with correct styling", () => {
+      const FrameOverlay = () => (
+        <div>
+          <img
+            src="data:image/png;base64,frame"
+            alt="Frame"
+            data-testid="frame-overlay"
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+      );
+
+      const { getByTestId } = render(<FrameOverlay />);
+
+      const frame = getByTestId("frame-overlay");
+      expect(frame).toBeInTheDocument();
+      expect(frame).toHaveStyle({ position: "absolute" });
+      expect(frame).toHaveStyle({ width: "100%" });
+      expect(frame).toHaveStyle({ height: "100%" });
+      expect(frame).toHaveStyle({ objectFit: "cover" });
+      expect(frame).toHaveAttribute("alt", "Frame");
     });
 
     test("should maintain aspect ratio with objectFit contain", () => {

@@ -53,12 +53,12 @@ export const FramedPainting: React.FC<FramedPaintingProps> = ({
   return (
     <group position={framePosition} rotation={[0, Math.PI, 0]}>
       {/* GLB Frame Model - flip X-axis to show front face */}
-      <primitive object={frameModel.clone()} scale={[-1, 1, 1]} />
+      <primitive object={frameModel.clone()} scale={[-1, 1, 1]} castShadow />
 
       {/* Painting plane */}
-      <mesh ref={meshRef} position={[0, 0, 0.01]}>
+      <mesh ref={meshRef} position={[0, 0, -0.025]} castShadow receiveShadow>
         <planeGeometry args={[planeWidth, planeHeight]} />
-        <meshStandardMaterial map={texture} roughness={0.4} metalness={0.0} />
+        <meshStandardMaterial map={texture} roughness={0.25} metalness={0.05} />
       </mesh>
     </group>
   );

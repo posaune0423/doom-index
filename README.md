@@ -53,11 +53,11 @@ PROVIDER_API_KEY=your_runware_api_key_here
 # Development (Next.js)
 bun run dev
 
+# Development (Cloudflare Workers Preview - Local R2)
+bun run preview
+
 # Development (Cloudflare Workers Cron)
 bun run wrangler:dev
-
-# Build for Cloudflare Pages
-bun run preview
 
 # Deploy to Cloudflare
 bun run deploy

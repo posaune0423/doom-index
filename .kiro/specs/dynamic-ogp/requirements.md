@@ -12,18 +12,22 @@ Dynamic OGP は、DOOM INDEX の生成画像を Twitter、Facebook、Discord な
 
 ## Requirements
 
-### Requirement 1: Next.js opengraph-image と ImageResponse による OGP 画像合成
+### Requirement 1: Next.js opengraph-image と ImageResponse による OGP 画像合成（額縁付き）
 
-**Objective:** As a Social Media User, I want the latest generated artwork centered in OGP format with black letterboxing, so that my shared links display optimally on social platforms.
+**Objective:** As a Social Media User, I want the latest generated artwork displayed within a decorative frame in OGP format with black letterboxing, so that my shared links display a gallery-like presentation on social platforms.
 
 #### Acceptance Criteria
 
 1. WHEN `app/opengraph-image.tsx` が実装されるとき THEN OGP Generator SHALL `next/og` の `ImageResponse` を使用し、JSX で OGP 画像（1200×630 px）を動的に生成する。
-2. IF R2 公開 URL（`https://{R2_DOMAIN}/state/global.json`）から `state/global.json` が取得できたとき THEN OGP Generator SHALL `lastThumbnailUrl` を抽出し、R2 から画像を `fetch` で取得して base64 または `ArrayBuffer` として読み込む。
+2. IF R2 公開 URL（`https://{R2_DOMAIN}/state/global.json`）から `state/global.json` が取得できたとき THEN OGP Generator SHALL `lastThumbnailUrl` を抽出し、R2 から画像を `fetch` で取得して base64 data URL として読み込む。
 3. WHERE 正方形画像（1024×1024）を OGP サイズ（1200×630）に配置するとき THEN OGP Generator SHALL 画像を中央配置し、アスペクト比を維持したまま高さ 630px に合わせてスケーリング（幅約 630px）し、左右の余白（各約 285px）を黒（`#000000`）で埋める。
-4. WHEN `ImageResponse` の JSX を構築するとき THEN OGP Generator SHALL `<div style={{ display: 'flex', width: '100%', height: '100%', background: '#000000', alignItems: 'center', justifyContent: 'center' }}>` をコンテナとし、内部に `<img src={imageDataUrl} style={{ height: '100%', width: 'auto', objectFit: 'contain' }} />` を配置する。
-5. IF `state/global.json` が存在しないまたは取得に失敗したとき THEN OGP Generator SHALL `public/placeholder-painting.webp` をファイルシステムから `readFile` で読み込み、同様に黒背景の中央配置で `ImageResponse` を生成する。
-6. WHEN 生成された画像を返すとき THEN OGP Generator SHALL `Content-Type: image/png`（ImageResponse のデフォルト）、`Cache-Control: public, max-age=60, stale-while-revalidate=30` ヘッダーを設定し、1 分間のキャッシュを許容する。
+4. WHEN 額縁画像（`public/frame.png`）を使用するとき THEN OGP Generator SHALL 額縁画像を取得して base64 data URL に変換し、生成画像の上にオーバーレイとして配置する。
+5. WHERE `ImageResponse` の JSX を構築するとき THEN OGP Generator SHALL `position: relative` のコンテナ内に、`position: absolute` で生成画像と額縁画像を重ねて配置する。具体的には：
+   - コンテナ: `<div style={{ display: 'flex', width: '100%', height: '100%', background: '#000000', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>`
+   - 生成画像: `<img src={artworkDataUrl} style={{ position: 'absolute', height: '100%', width: 'auto', objectFit: 'contain' }} />`
+   - 額縁オーバーレイ: `<img src={frameDataUrl} style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover' }} />`
+6. IF `state/global.json` が存在しないまたは取得に失敗したとき THEN OGP Generator SHALL `public/placeholder-painting.webp` を `fetch` で読み込み、同様に黒背景と額縁付きで `ImageResponse` を生成する。
+7. WHEN 生成された画像を返すとき THEN OGP Generator SHALL `Content-Type: image/png`（ImageResponse のデフォルト）、`Cache-Control: public, max-age=60, stale-while-revalidate=30` ヘッダーを設定し、1 分間のキャッシュを許容する。
 
 ### Requirement 2: OGP メタデータの設定（generateMetadata）
 

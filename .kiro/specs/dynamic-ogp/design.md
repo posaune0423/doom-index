@@ -2,9 +2,9 @@
 
 ## Overview
 
-Dynamic OGP は、DOOM INDEX の生成画像を Twitter、Facebook、Discord、LinkedIn などのソーシャルプラットフォームで効果的に共有するための動的 Open Graph Protocol 画像生成機能である。Next.js の `opengraph-image.tsx` ファイル規約と `next/og` の `ImageResponse` API を活用し、R2 に保存された 1:1（1024×1024 px）の正方形画像を OGP 標準アスペクト比（1200×630 px）に変換し、黒背景でレターボックス形式にて配信する。
+Dynamic OGP は、DOOM INDEX の生成画像を Twitter、Facebook、Discord、LinkedIn などのソーシャルプラットフォームで効果的に共有するための動的 Open Graph Protocol 画像生成機能である。Next.js の `opengraph-image.tsx` ファイル規約と `next/og` の `ImageResponse` API を活用し、R2 に保存された 1:1（1024×1024 px）の正方形画像を OGP 標準アスペクト比（1200×630 px）に変換し、装飾的な額縁オーバーレイを追加した上で、黒背景でレターボックス形式にて配信する。
 
-主対象ユーザーは、Twitter や Discord でリンクをシェアするコミュニティメンバーであり、最新の世界状態を表す生成画像を魅力的なソーシャルカードとして表示させたい。技術的には、Cloudflare Pages の Edge Runtime と Next.js の動的レンダリング機能を活用し、1 分間隔で更新される最新画像を常に反映する。キャッシュ戦略は `Cache-Control: max-age=60, stale-while-revalidate=30` を基本とし、エッジキャッシュとの協調により R2 への負荷を最小化する。
+主対象ユーザーは、Twitter や Discord でリンクをシェアするコミュニティメンバーであり、最新の世界状態を表す生成画像をギャラリーのような高級感のあるソーシャルカードとして表示させたい。技術的には、Cloudflare Pages の Edge Runtime と Next.js の ISR（Incremental Static Regeneration）機能を活用し、1 分間隔で更新される最新画像を常に反映する。キャッシュ戦略は `Cache-Control: max-age=60, stale-while-revalidate=30` を基本とし、エッジキャッシュとの協調により R2 への負荷を最小化する。
 
 ### Goals
 
@@ -96,12 +96,12 @@ graph TB
   - Rationale: Next.js の標準規約に従うことで、`/opengraph-image` パスの自動生成、メタデータとの自動統合、型安全性を享受できる。
   - Trade-offs: ファイル規約に依存するため、カスタムパス（例: `/api/og-image`）は使用できないが、標準化により保守性が向上。
 
-- **Decision: ImageResponse による画像合成（プロキシ配信ではなく）**
-  - Context: 正方形画像（1024×1024）を横長 OGP（1200×630）に変換し、黒背景でレターボックスを追加する必要がある。
-  - Alternatives: R2 画像をそのままプロキシ配信（アスペクト比不一致）、サーバーサイドで sharp を使用した画像処理（Node.js 依存）、外部画像処理 API（Cloudinary など）。
-  - Selected Approach: `next/og` の `ImageResponse` を使用し、JSX で黒背景コンテナ + 中央配置画像を定義して動的にレンダリング。
-  - Rationale: Edge Runtime 対応、追加依存なし、アスペクト比変換がフレキシブル、ソーシャルプラットフォーム最適化が容易。
-  - Trade-offs: 画像のレンダリングコストが発生するが、60 秒キャッシュにより実質的な負荷は低い。
+- **Decision: ImageResponse による画像合成と額縁オーバーレイ**
+  - Context: 正方形画像（1024×1024）を横長 OGP（1200×630）に変換し、黒背景でレターボックスを追加する必要がある。さらに、ギャラリーのような視覚体験を提供するため、生成画像に装飾的な額縁を追加する。
+  - Alternatives: R2 画像をそのままプロキシ配信（アスペクト比不一致）、サーバーサイドで sharp を使用した画像処理（Node.js 依存）、外部画像処理 API（Cloudinary など）、Canvas API による動的合成。
+  - Selected Approach: `next/og` の `ImageResponse` を使用し、JSX で黒背景コンテナ + 中央配置の生成画像 + 額縁画像オーバーレイを定義して動的にレンダリング。`position: relative` コンテナ内に `position: absolute` で画像を重ねる。
+  - Rationale: Edge Runtime 対応、追加依存なし、アスペクト比変換がフレキシブル、ソーシャルプラットフォーム最適化が容易。額縁オーバーレイにより、ギャラリー展示のような高級感のある視覚表現を実現。
+  - Trade-offs: 画像のレンダリングコストが発生するが、60 秒キャッシュにより実質的な負荷は低い。額縁画像の fetch が追加されるが、`public/` からの取得のため高速。
 
 - **Decision: 1200×630 px レターボックスフォーマット**
   - Context: 主要ソーシャルプラットフォーム（Twitter、Facebook、LinkedIn）の推奨 OGP サイズは 1200×630 px（1.91:1）。
