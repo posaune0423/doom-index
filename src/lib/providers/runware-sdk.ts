@@ -63,11 +63,52 @@ export const createRunwareSdkProvider = (): ImageProvider => ({
         } as AppError);
       }
 
+      // Always use 1024x1024 for consistent image generation
+      const width = 1024;
+      const height = 1024;
+
+      // Estimate token count from prompt
+      const estimateTokenCount = (text: string): { charBased: number; wordBased: number } => {
+        const charCount = text.length;
+        const wordCount = text
+          .trim()
+          .split(/\s+/)
+          .filter(w => w.length > 0).length;
+        // 1 token ≈ 4 characters (English)
+        // 1 token ≈ 0.75 words (English)
+        return {
+          charBased: Math.ceil(charCount / 4),
+          wordBased: Math.ceil(wordCount / 0.75),
+        };
+      };
+
+      const promptTokens = estimateTokenCount(input.prompt);
+      const negativeTokens = estimateTokenCount(input.negative);
+      const totalTokens = {
+        charBased: promptTokens.charBased + negativeTokens.charBased,
+        wordBased: promptTokens.wordBased + negativeTokens.wordBased,
+      };
+
+      // Log final prompt before image generation
+      logger.info("runware-sdk.prompt.final", {
+        prompt: input.prompt,
+        negative: input.negative,
+        model,
+        width,
+        height,
+        seed: seedInt,
+        tokens: {
+          prompt: promptTokens,
+          negative: negativeTokens,
+          total: totalTokens,
+        },
+      });
+
       const images = (await runware.requestImages({
         positivePrompt: input.prompt,
         negativePrompt: input.negative,
-        height: input.height,
-        width: input.width,
+        height,
+        width,
         model,
         numberResults: 1,
         outputFormat: input.format === "png" ? "PNG" : "WEBP",

@@ -4,11 +4,10 @@ import type { Result } from "neverthrow";
 import { createAiSdkProvider } from "./ai-sdk";
 import { createRunwareSdkProvider } from "./runware-sdk";
 import { createMockImageProvider } from "./mock";
-
-export type ProviderName = "ai-sdk" | "runware-sdk" | "smart";
+import { env } from "@/env";
 
 // Mock provider is for testing only
-export type ProviderNameWithMock = ProviderName | "mock";
+export type ProviderNameWithMock = "mock";
 
 /**
  * AI SDK supported models
@@ -76,55 +75,59 @@ const AI_SDK_MODELS = new Set([
  * - If model is in AI_SDK_MODELS, use ai-sdk
  * - Otherwise, use runware-sdk as default (supports any model via AIR system)
  */
-const getProviderForModel = (model?: string): ProviderName => {
-  if (!model) return "runware-sdk";
+const getProviderForModel = (model?: string): ImageProvider => {
+  if (!model) {
+    // Default to runware-sdk if no model specified
+    return createRunwareSdkProvider();
+  }
 
   // Runware AIR format: runware:xxx@xxx or civitai:xxx@xxx
   if (model.startsWith("runware:") || /^civitai:\d+@\d+$/.test(model)) {
-    return "runware-sdk";
+    return createRunwareSdkProvider();
   }
 
   // AI SDK supported models
   if (AI_SDK_MODELS.has(model)) {
-    return "ai-sdk";
+    return createAiSdkProvider();
   }
 
   // Default to runware-sdk (supports any model via AIR system)
-  return "runware-sdk";
+  return createRunwareSdkProvider();
 };
 
-export const resolveProvider = (name: ProviderName = "smart"): ImageProvider => {
-  switch (name) {
-    case "ai-sdk":
-      return createAiSdkProvider();
-    case "runware-sdk":
-      return createRunwareSdkProvider();
-    case "smart":
-      return createSmartProvider();
-    default:
-      return createSmartProvider();
-  }
+/**
+ * Resolves the appropriate provider based on the model name
+ * - If model is specified, resolves provider that can execute that model
+ * - If model is not specified, uses IMAGE_MODEL from environment or defaults to "dall-e-3"
+ *
+ * @param model - Optional model name. If not provided, uses env.IMAGE_MODEL or default
+ * @returns ImageProvider that can execute the specified model
+ */
+export const resolveProviderForModel = (model?: string): ImageProvider => {
+  const modelToUse = model || env.IMAGE_MODEL || "dall-e-3";
+  return getProviderForModel(modelToUse);
 };
+
+/**
+ * Creates a provider that automatically resolves the appropriate provider based on the model in ImageRequest
+ * This provider will resolve the provider dynamically for each request based on the model specified in the request
+ */
+export const createAutoResolveProvider = (): ImageProvider => ({
+  name: "auto-resolve",
+
+  async generate(input: ImageRequest): Promise<Result<ImageResponse, AppError>> {
+    const provider = resolveProviderForModel(input.model);
+    return provider.generate(input);
+  },
+});
 
 /**
  * Resolve provider including mock (for testing only)
  */
-export const resolveProviderWithMock = (name: ProviderNameWithMock = "smart"): ImageProvider => {
+export const resolveProviderWithMock = (name: ProviderNameWithMock): ImageProvider => {
   if (name === "mock") {
     return createMockImageProvider();
   }
-  return resolveProvider(name as ProviderName);
+  // This should not happen in normal usage, but fallback to auto-resolve
+  return createAutoResolveProvider();
 };
-
-/**
- * Smart provider that automatically selects the appropriate provider based on the model
- */
-export const createSmartProvider = (): ImageProvider => ({
-  name: "smart",
-
-  async generate(input: ImageRequest): Promise<Result<ImageResponse, AppError>> {
-    const providerName = getProviderForModel(input.model);
-    const provider = resolveProvider(providerName);
-    return provider.generate(input);
-  },
-});

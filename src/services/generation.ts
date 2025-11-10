@@ -2,6 +2,7 @@ import { err, ok, Result } from "neverthrow";
 import { roundMc4 } from "@/lib/round";
 import { hashRoundedMap } from "@/lib/pure/hash";
 import { logger } from "@/utils/logger";
+import { env } from "@/env";
 import { TOKEN_TICKERS, type McMap, type McMapRounded } from "@/constants/token";
 import type { MarketCapService } from "@/services/market-cap";
 import type { PromptService, PromptComposition } from "@/services/prompt";
@@ -67,6 +68,13 @@ export function createGenerationService({
     const roundedMap = roundMc4(mcMap) as McMapRounded;
     const hash = await hashRoundedMap(roundedMap);
 
+    // Log market cap values and calculated values
+    log.info("generation.mc", {
+      mcMap,
+      roundedMap,
+      hash,
+    });
+
     const globalStateResult = await stateService.readGlobalState();
     if (globalStateResult.isErr()) return err(globalStateResult.error);
 
@@ -88,6 +96,50 @@ export function createGenerationService({
     if (promptResult.isErr()) return err(promptResult.error);
     const composition: PromptComposition = promptResult.value;
 
+    // Log visual parameters and prompt composition
+    log.info("generation.composition", {
+      visualParams: composition.vp,
+      paramsHash: composition.paramsHash,
+      seed: composition.seed,
+      size: `${composition.prompt.size.w}x${composition.prompt.size.h}`,
+    });
+
+    // Estimate token count from prompt
+    const estimateTokenCount = (text: string): { charBased: number; wordBased: number } => {
+      const charCount = text.length;
+      const wordCount = text
+        .trim()
+        .split(/\s+/)
+        .filter(w => w.length > 0).length;
+      // 1 token ≈ 4 characters (English)
+      // 1 token ≈ 0.75 words (English)
+      return {
+        charBased: Math.ceil(charCount / 4),
+        wordBased: Math.ceil(wordCount / 0.75),
+      };
+    };
+
+    const promptTokens = estimateTokenCount(composition.prompt.text);
+    const negativeTokens = estimateTokenCount(composition.prompt.negative);
+    const totalTokens = {
+      charBased: promptTokens.charBased + negativeTokens.charBased,
+      wordBased: promptTokens.wordBased + negativeTokens.wordBased,
+    };
+
+    // Log final prompt before image generation
+    log.info("generation.prompt.final", {
+      prompt: composition.prompt.text,
+      negative: composition.prompt.negative,
+      seed: composition.prompt.seed,
+      model: env.IMAGE_MODEL,
+      size: `${composition.prompt.size.w}x${composition.prompt.size.h}`,
+      tokens: {
+        prompt: promptTokens,
+        negative: negativeTokens,
+        total: totalTokens,
+      },
+    });
+
     const imageResult = await imageProvider.generate({
       prompt: composition.prompt.text,
       negative: composition.prompt.negative,
@@ -95,6 +147,7 @@ export function createGenerationService({
       height: composition.prompt.size.h,
       format: composition.prompt.format,
       seed: composition.prompt.seed,
+      model: env.IMAGE_MODEL,
     });
     if (imageResult.isErr()) return err(imageResult.error);
 

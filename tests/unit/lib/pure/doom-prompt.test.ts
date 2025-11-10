@@ -95,8 +95,8 @@ describe("Doom Prompt Generation", () => {
       expect(payload.style).toContain("medieval renaissance");
       expect(payload.negatives).toContain("watermark");
       expect(payload.fragments).toHaveLength(9);
-      expect(payload.width).toBe(1280);
-      expect(payload.height).toBe(720);
+      expect(payload.width).toBe(1024);
+      expect(payload.height).toBe(1024);
       expect(payload.steps).toBe(30);
       expect(payload.cfg).toBe(5.5);
       expect(payload.seed).toBe(42);

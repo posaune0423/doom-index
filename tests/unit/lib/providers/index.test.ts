@@ -1,26 +1,36 @@
 import { describe, it, expect } from "bun:test";
-import { resolveProvider, resolveProviderWithMock, createSmartProvider } from "@/lib/providers";
+import { resolveProviderForModel, resolveProviderWithMock, createAutoResolveProvider } from "@/lib/providers";
 
 describe("Provider Resolution", () => {
-  describe("resolveProvider", () => {
-    it("should return ai-sdk provider when specified", () => {
-      const provider = resolveProvider("ai-sdk");
+  describe("resolveProviderForModel", () => {
+    it("should return ai-sdk provider for dall-e-3 model", () => {
+      const provider = resolveProviderForModel("dall-e-3");
       expect(provider.name).toBe("ai-sdk");
     });
 
-    it("should return runware-sdk provider when specified", () => {
-      const provider = resolveProvider("runware-sdk");
+    it("should return ai-sdk provider for gpt-image-1 model", () => {
+      const provider = resolveProviderForModel("gpt-image-1");
+      expect(provider.name).toBe("ai-sdk");
+    });
+
+    it("should return runware-sdk provider for runware model", () => {
+      const provider = resolveProviderForModel("runware:100@1");
       expect(provider.name).toBe("runware-sdk");
     });
 
-    it("should return smart provider when specified", () => {
-      const provider = resolveProvider("smart");
-      expect(provider.name).toBe("smart");
+    it("should return runware-sdk provider for civitai model", () => {
+      const provider = resolveProviderForModel("civitai:38784@44716");
+      expect(provider.name).toBe("runware-sdk");
     });
 
-    it("should return smart provider by default", () => {
-      const provider = resolveProvider();
-      expect(provider.name).toBe("smart");
+    it("should return ai-sdk provider by default when no model specified", () => {
+      const provider = resolveProviderForModel();
+      expect(provider.name).toBe("ai-sdk");
+    });
+
+    it("should return runware-sdk provider for unknown model", () => {
+      const provider = resolveProviderForModel("unknown-model");
+      expect(provider.name).toBe("runware-sdk");
     });
   });
 
@@ -29,45 +39,33 @@ describe("Provider Resolution", () => {
       const provider = resolveProviderWithMock("mock");
       expect(provider.name).toBe("mock");
     });
-
-    it("should resolve other providers normally", () => {
-      const aiProvider = resolveProviderWithMock("ai-sdk");
-      expect(aiProvider.name).toBe("ai-sdk");
-
-      const runwareProvider = resolveProviderWithMock("runware-sdk");
-      expect(runwareProvider.name).toBe("runware-sdk");
-
-      const smartProvider = resolveProviderWithMock("smart");
-      expect(smartProvider.name).toBe("smart");
-    });
   });
 
-  describe("Smart Provider Model Selection", () => {
-    it("should have smart provider name", () => {
-      const provider = createSmartProvider();
-      expect(provider.name).toBe("smart");
+  describe("Auto Resolve Provider", () => {
+    it("should have auto-resolve provider name", () => {
+      const provider = createAutoResolveProvider();
+      expect(provider.name).toBe("auto-resolve");
     });
 
     it("should have generate method", () => {
-      const provider = createSmartProvider();
+      const provider = createAutoResolveProvider();
       expect(typeof provider.generate).toBe("function");
     });
   });
 
   describe("Model-based Provider Selection Logic", () => {
     it("should route to correct provider based on model", () => {
-      // Test that the smart provider correctly identifies which provider to use
+      // Test that providers are correctly resolved based on model names
       // Note: We don't actually call generate() here since it would require API keys
 
-      const smartProvider = createSmartProvider();
-      expect(smartProvider.name).toBe("smart");
-
-      // Verify that specific providers can be resolved
-      const aiSdkProvider = resolveProvider("ai-sdk");
+      const aiSdkProvider = resolveProviderForModel("dall-e-3");
       expect(aiSdkProvider.name).toBe("ai-sdk");
 
-      const runwareProvider = resolveProvider("runware-sdk");
+      const runwareProvider = resolveProviderForModel("runware:100@1");
       expect(runwareProvider.name).toBe("runware-sdk");
+
+      const civitaiProvider = resolveProviderForModel("civitai:38784@44716");
+      expect(civitaiProvider.name).toBe("runware-sdk");
     });
   });
 });

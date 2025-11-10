@@ -38,10 +38,11 @@ export const env = createEnv({
    * These can be used on both client and server
    */
   shared: {
-    // Image Generation Provider
-    // "smart" automatically selects the appropriate provider based on the model
-    // Note: "mock" is for testing only
-    IMAGE_PROVIDER: z.enum(["ai-sdk", "runware-sdk", "smart"]).default("smart"),
+    // Image Generation Model
+    // The model name to use for image generation (e.g., "dall-e-3", "runware:100@1", "civitai:38784@44716")
+    // If not specified, defaults to "dall-e-3"
+    // The provider will be automatically resolved based on the model
+    IMAGE_MODEL: z.string().optional(),
 
     // Prompt Template
     PROMPT_TEMPLATE: z.enum(["default", "experimental"]).default("default"),
@@ -60,7 +61,7 @@ export const env = createEnv({
     LOG_LEVEL: process.env.LOG_LEVEL,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     // Shared
-    IMAGE_PROVIDER: process.env.IMAGE_PROVIDER,
+    IMAGE_MODEL: process.env.IMAGE_MODEL,
     PROMPT_TEMPLATE: process.env.PROMPT_TEMPLATE,
   },
 

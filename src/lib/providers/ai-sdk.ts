@@ -55,15 +55,56 @@ export const createAiSdkProvider = (): ImageProvider => ({
     try {
       const model = input.model || "dall-e-3";
 
+      // Always use 1024x1024 for consistent image generation
+      const width = 1024;
+      const height = 1024;
+
       logger.debug("ai-sdk.generate.start", {
         model,
         prompt: input.prompt.substring(0, 100),
-        size: `${input.width}x${input.height}`,
+        requestedSize: `${input.width}x${input.height}`,
+        actualSize: `${width}x${height}`,
         seed: input.seed,
       });
 
-      const requestedSize = `${input.width}x${input.height}` as ImageSize;
+      const requestedSize = `${width}x${height}` as ImageSize;
       const resolvedModel = resolveAiSdkModel(model);
+
+      // Estimate token count from prompt
+      const estimateTokenCount = (text: string): { charBased: number; wordBased: number } => {
+        const charCount = text.length;
+        const wordCount = text
+          .trim()
+          .split(/\s+/)
+          .filter(w => w.length > 0).length;
+        // 1 token ≈ 4 characters (English)
+        // 1 token ≈ 0.75 words (English)
+        return {
+          charBased: Math.ceil(charCount / 4),
+          wordBased: Math.ceil(wordCount / 0.75),
+        };
+      };
+
+      const promptTokens = estimateTokenCount(input.prompt);
+      const negativeTokens = estimateTokenCount(input.negative);
+      const totalTokens = {
+        charBased: promptTokens.charBased + negativeTokens.charBased,
+        wordBased: promptTokens.wordBased + negativeTokens.wordBased,
+      };
+
+      // Log final prompt before image generation
+      logger.info("ai-sdk.prompt.final", {
+        prompt: input.prompt,
+        negative: input.negative,
+        model,
+        size: requestedSize,
+        seed: input.seed,
+        tokens: {
+          prompt: promptTokens,
+          negative: negativeTokens,
+          total: totalTokens,
+        },
+      });
 
       const result = await generateImage({
         model: resolvedModel,

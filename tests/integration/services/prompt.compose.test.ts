@@ -26,7 +26,7 @@ describe("PromptService.composePrompt (3.x)", () => {
       const value = result.value;
       expect(value.paramsHash).toMatch(/^[a-f0-9]{8}$/);
       expect(value.seed).toMatch(/^[a-f0-9]{12}$/);
-      expect(value.prompt.size).toEqual({ w: 1280, h: 720 });
+      expect(value.prompt.size).toEqual({ w: 1024, h: 1024 });
       expect(value.prompt.format).toBe("webp");
       expect(value.prompt.text).toContain("medieval");
       expect(value.prompt.text).toContain("allegorical");

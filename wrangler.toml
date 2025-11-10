@@ -9,9 +9,9 @@ compatibility_flags = [
  "global_fetch_strictly_public",
 ]
 
-# Cron Triggers - 毎分実行
+# Cron Triggers
 [triggers]
-crons = ["0 * * * *"]
+crons = ["0 * * * *"] # Every hour
 
 # R2 Bucket Binding
 [[r2_buckets]]
@@ -22,7 +22,7 @@ bucket_name = "doom-index-storage"
 binding = "NEXT_INC_CACHE_R2_BUCKET"
 bucket_name = "doom-index-next-inc-cache"
 
-# Next.js on Cloudflare Pages の設定は別途 open-next.config.ts で管理
+# Next.js on Cloudflare Pages is managed in open-next.config.ts
 [assets]
 directory = "./.open-next/assets"
 binding = "ASSETS"

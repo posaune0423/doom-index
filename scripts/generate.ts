@@ -4,20 +4,20 @@
  * Image Generation Script
  *
  * Usage:
- *   bun scripts/generate.ts --provider smart --mc "CO2=1300000,ICE=200000,FOREST=900000,NUKE=50000,MACHINE=1450000,PANDEMIC=700000,FEAR=1100000,HOPE=400000"
- *   bun scripts/generate.ts --provider runware-sdk --seed abc123def456 --w 1280 --h 720
- *   bun scripts/generate.ts --provider mock --output ./test-output
- *   bun scripts/generate.ts --provider smart --model "dall-e-3" --w 1024 --h 1024
+ *   bun scripts/generate.ts --model "dall-e-3" --mc "CO2=1300000,ICE=200000,FOREST=900000,NUKE=50000,MACHINE=1450000,PANDEMIC=700000,FEAR=1100000,HOPE=400000"
+ *   bun scripts/generate.ts --model "runware:100@1" --seed abc123def456 --w 1280 --h 720
+ *   bun scripts/generate.ts --model "civitai:38784@44716" --output ./test-output
+ *   bun scripts/generate.ts --model "dall-e-3" --w 1024 --h 1024
  */
 
 import { join } from "path";
 import type { McMapRounded } from "@/constants/token";
 import { createPromptService } from "@/services/prompt";
-import { resolveProviderWithMock, type ProviderNameWithMock } from "@/lib/providers";
+import { resolveProviderWithMock, createAutoResolveProvider } from "@/lib/providers";
 import { logger } from "@/utils/logger";
 
 type Args = {
-  provider: ProviderNameWithMock;
+  mock?: boolean;
   mc?: string;
   seed?: string;
   model?: string;
@@ -30,7 +30,7 @@ type Args = {
 const parseArgs = (): Args => {
   const args = process.argv.slice(2);
   const parsed: Partial<Args> = {
-    provider: "smart",
+    mock: false,
     width: 1280,
     height: 720,
     format: "webp",
@@ -42,9 +42,8 @@ const parseArgs = (): Args => {
     const next = args[i + 1];
 
     switch (arg) {
-      case "--provider":
-        parsed.provider = next as ProviderNameWithMock;
-        i++;
+      case "--mock":
+        parsed.mock = true;
         break;
       case "--mc":
         parsed.mc = next;
@@ -81,10 +80,11 @@ const parseArgs = (): Args => {
 Usage: bun scripts/generate.ts [options]
 
 Options:
-  --provider <name>    Provider name: smart, ai-sdk, runware-sdk, mock (default: smart)
+  --mock               Use mock provider (for testing only)
   --mc <values>        Market cap values: "CO2=1000000,ICE=2000000,..." (default: all 1000000)
   --seed <string>      Custom seed (default: generated from MC)
   --model <name>       Model name: dall-e-3, runware:100@1, civitai:xxx@xxx, etc.
+                       Provider will be automatically resolved based on the model
   --w, --width <num>   Image width (default: 1280)
   --h, --height <num>  Image height (default: 720)
   --format <fmt>       Output format: webp, png (default: webp)
@@ -92,11 +92,11 @@ Options:
   --help               Show this help
 
 Examples:
-  bun scripts/generate.ts --provider smart
-  bun scripts/generate.ts --provider smart --model "dall-e-3"
-  bun scripts/generate.ts --provider runware-sdk --model "civitai:38784@44716"
-  bun scripts/generate.ts --mc "CO2=1300000,ICE=200000,FOREST=900000,NUKE=50000,MACHINE=1450000,PANDEMIC=700000,FEAR=1100000,HOPE=400000"
-  bun scripts/generate.ts --provider smart --seed custom123 --w 1024 --h 1024
+  bun scripts/generate.ts --model "dall-e-3"
+  bun scripts/generate.ts --model "runware:100@1"
+  bun scripts/generate.ts --model "civitai:38784@44716"
+  bun scripts/generate.ts --model "dall-e-3" --mc "CO2=1300000,ICE=200000,FOREST=900000,NUKE=50000,MACHINE=1450000,PANDEMIC=700000,FEAR=1100000,HOPE=400000"
+  bun scripts/generate.ts --model "dall-e-3" --seed custom123 --w 1024 --h 1024
         `);
         process.exit(0);
     }
@@ -134,7 +134,8 @@ const main = async () => {
   const args = parseArgs();
 
   logger.info("generate.start", {
-    provider: args.provider,
+    model: args.model,
+    mock: args.mock,
     width: args.width,
     height: args.height,
     format: args.format,
@@ -171,8 +172,9 @@ const main = async () => {
   console.log(`Params Hash: ${composition.paramsHash}`);
 
   // Generate image
-  const provider = resolveProviderWithMock(args.provider);
-  logger.info("generate.provider", { name: provider.name });
+  // Provider is automatically resolved based on the model
+  const provider = args.mock ? resolveProviderWithMock("mock") : createAutoResolveProvider();
+  logger.info("generate.provider", { name: provider.name, model: args.model });
 
   const imageRequest = {
     prompt: composition.prompt.text,

@@ -55,7 +55,7 @@ export function createPromptService({
         prompt: {
           text: promptText,
           negative: negativePrompt,
-          size: { w: 1280, h: 720 },
+          size: { w: 1024, h: 1024 },
           format: "webp",
           seed,
           filename,

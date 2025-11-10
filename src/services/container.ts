@@ -3,7 +3,7 @@ import { createMarketCapService } from "@/services/market-cap";
 import { createPromptService } from "@/services/prompt";
 import { createStateService } from "@/services/state";
 import { createGenerationService } from "@/services/generation";
-import { resolveProvider } from "@/lib/providers";
+import { createAutoResolveProvider } from "@/lib/providers";
 import { createRevenueEngine } from "@/services/revenue";
 import { resolveR2Bucket } from "@/lib/r2";
 
@@ -27,7 +27,8 @@ export function createServicesForWorkers(r2Bucket?: R2Bucket) {
   const marketCapService = createMarketCapService({ fetch, log: logger });
   const promptService = createPromptService();
   const stateService = createStateService({ r2Bucket: bucket });
-  const imageProvider = resolveProvider("smart"); // TODO: Get from environment variable
+  // Provider automatically resolves based on model in ImageRequest
+  const imageProvider = createAutoResolveProvider();
   const revenueEngine = createRevenueEngine();
 
   const fetchTradeSnapshots = async () => [];

@@ -57,6 +57,17 @@ bun run dev
 bun run preview
 
 # Development (Cloudflare Workers Cron)
+# Start preview with --test-scheduled flag
+bun run preview -- --test-scheduled
+
+# Automatically trigger cron every minute (starting at :00 seconds)
+# This script waits until the next minute (0 seconds) and then triggers every 60 seconds
+bun run watch-cron
+
+# Or trigger cron manually via curl
+curl "http://localhost:8787/__scheduled?cron=0+*+*+*+*"
+
+# Or use wrangler dev command
 bun run wrangler:dev
 
 # Deploy to Cloudflare
@@ -138,6 +149,35 @@ The `params.json` includes:
 - File size
 - Timestamp
 
+## Cron Watcher Script
+
+For local development, use the cron watcher script to automatically trigger scheduled cron jobs:
+
+### Basic Usage
+
+```bash
+# Start cron watcher (runs every minute starting at :00 seconds)
+bun run watch-cron
+
+# Custom port
+bun run watch-cron --port 8787
+
+# Custom interval (in seconds)
+bun run watch-cron --interval 60
+
+# Custom cron expression
+bun run watch-cron --cron "0 * * * *"
+```
+
+### Available Options
+
+- `--port, -p <number>`: Server port (default: 8787)
+- `--interval, -i <number>`: Interval in seconds (default: 60)
+- `--cron, -c <string>`: Cron expression (default: "0 \* \* \* \*")
+- `--help, -h`: Show help message
+
+**Note**: The script waits until the next minute (0 seconds) before starting, then executes every 60 seconds. This matches Cloudflare Workers cron trigger behavior.
+
 ## Architecture
 
 ### Tech Stack
@@ -206,7 +246,8 @@ workers/
 └── cron.ts           # Cloudflare Cron Trigger handler
 
 scripts/
-└── generate.ts       # Image generation script
+├── generate.ts       # Image generation script
+└── watch-cron.ts     # Cron watcher for local development
 
 wrangler.toml         # Cloudflare Workers configuration
 open-next.config.ts   # Next.js on Cloudflare Pages configuration

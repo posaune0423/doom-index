@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type FC } from "react";
 import useSound from "use-sound";
 import { useHaptic } from "use-haptic";
+import { useGlobalStateRefetch } from "@/hooks/use-global-state";
+import { logger } from "@/utils/logger";
 
 const MINUTE_MS = 60000;
 const HAPTIC_WINDOW_START_REMAINING_SECOND = 10;
@@ -18,6 +20,13 @@ export const TopBarProgress: FC = () => {
 
   const { triggerHaptic } = useHaptic();
   const [playChime] = useSound("/clock-chime.mp3", { interrupt: true });
+  const refetchGlobalState = useGlobalStateRefetch();
+  const refetchGlobalStateRef = useRef(refetchGlobalState);
+
+  // refetch関数の参照を最新に保つ
+  useEffect(() => {
+    refetchGlobalStateRef.current = refetchGlobalState;
+  }, [refetchGlobalState]);
 
   useEffect(() => {
     const animate = () => {
@@ -27,7 +36,6 @@ export const TopBarProgress: FC = () => {
       const nextRemainingSeconds = Math.floor(remainingMs / 1000);
       const currentElapsedProgress = elapsedInCycle / MINUTE_MS;
 
-      // クライアント側でのみ初期値を設定（Hydrationエラーを防ぐ）
       if (!isInitializedRef.current) {
         const initialProgress = currentElapsedProgress;
         const initialDisplaySecond = Math.min(59, nextRemainingSeconds);
@@ -49,13 +57,16 @@ export const TopBarProgress: FC = () => {
           triggerHaptic();
           playChime();
         }
+        // 1分経過時にglobal stateを更新して絵画の画像を自動的に変化させる
+        refetchGlobalStateRef.current().catch(err => {
+          logger.error("top-bar-progress.refetchGlobalState.failed", { error: err });
+        });
         setDisplaySecond(0);
         setProgress(0);
         lastRemainingRef.current = 0;
         previousProgressRef.current = 0;
       } else {
         const displaySeconds = Math.min(59, nextRemainingSeconds);
-        // ゲージは実際の経過時間から直接計算（秒数の切り捨ての影響を受けない）
         const progressValue = elapsedInCycle / MINUTE_MS;
 
         if (displaySeconds !== previousRemaining) {
@@ -69,7 +80,6 @@ export const TopBarProgress: FC = () => {
           lastRemainingRef.current = displaySeconds;
         }
 
-        // ゲージは毎フレーム更新（秒数とは独立して正確な進捗を表示）
         previousProgressRef.current = currentElapsedProgress;
         setProgress(progressValue);
       }

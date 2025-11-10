@@ -72,6 +72,13 @@ export function toWeightedFragments(mc: McMap): WeightedFragment[] {
 /**
  * Build SDXL-style prompt with bracket weights
  * Format: (phrase:weight)
+ *
+ * Template structure:
+ * - Opening line with theme
+ * - Weighted fragments (sorted by weight descending)
+ * - Style base (fixed)
+ * - Negative prompt (included in the prompt string)
+ * - All elements are always included, weighted by market cap
  */
 export function buildSDXLPrompt(mc: McMap): { prompt: string; negative: string } {
   const fragments = toWeightedFragments(mc);
@@ -81,7 +88,8 @@ export function buildSDXLPrompt(mc: McMap): { prompt: string; negative: string }
   const prompt = [
     "a grand medieval allegorical oil painting of the world, all forces visible and weighted by real-time power,",
     weightedLines + ",",
-    STYLE_BASE,
+    STYLE_BASE + ",",
+    `negative prompt: ${NEGATIVE_PROMPT}`,
   ].join("\n");
 
   return {
@@ -104,7 +112,7 @@ export function buildGenericPayload(
     seed?: number;
   } = {},
 ) {
-  const { width = 1280, height = 720, steps = 30, cfg = 5.5, seed = 42 } = options;
+  const { width = 1024, height = 1024, steps = 30, cfg = 5.5, seed = 42 } = options;
 
   return {
     style: STYLE_BASE,
