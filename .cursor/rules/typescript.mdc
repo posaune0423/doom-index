@@ -1,0 +1,282 @@
+---
+description:
+globs: *.ts
+alwaysApply: false
+---
+## TypeScript
+
+TypeScript でのコーディングにおける一般的なベストプラクティスをまとめます。
+
+### 方針
+
+- 最初に型と、それを処理する関数のインターフェースを考える
+- コードのコメントとして、そのファイルがどういう仕様化を可能な限り明記する
+- 実装が内部状態を持たないとき、 class による実装を避けて関数を優先する
+- 副作用を抽象するために、アダプタパターンで外部依存を抽象し、テストではインメモリなアダプタで処理する
+
+### 型の使用方針
+
+1. 具体的な型を使用
+
+   - any の使用を避ける
+   - unknown を使用してから型を絞り込む
+   - Utility Types を活用する
+
+2. 型エイリアスの命名
+
+   - 意味のある名前をつける
+   - 型の意図を明確にする
+
+   ```ts
+   // Good
+   type UserId = string;
+   type UserData = {
+     id: UserId;
+     createdAt: Date;
+   };
+
+   // Bad
+   type Data = any;
+   ```
+
+### エラー処理
+
+1. 早期リターンを徹底してネストを浅く保つ
+   ```ts
+   // 悪い例: ネストが深い
+   function process(x: number) {
+     if (x > 0) {
+       try {
+         // ...
+         if (y) {
+           // 処理
+         } else {
+           // 別処理
+         }
+       } catch (err) {
+         // エラー処理
+       }
+     }
+   }
+
+   // 良い例: 早期リターンでネストをフラットに
+   function process(x: number) {
+     if (x <= 0) return;
+     try {
+       // ...
+     } catch {
+       return;
+     }
+     if (!y) return;
+     // 主処理
+   }
+   ```
+
+2. neverthrow を用いた関数型エラーハンドリング
+   ```ts
+   import { ok, err, Result } from "npm:neverthrow";
+
+   type FetchError = { type: "network" | "notFound"; message: string };
+
+   async function fetchData(url: string): Promise<Result<Data, FetchError>> {
+     if (!url) {
+       return err({ type: "network", message: "URL is empty" });
+     }
+     try {
+       const res = await fetch(url);
+       if (!res.ok) {
+         return err({
+           type: res.status === 404 ? "notFound" : "network",
+           message: `HTTP ${res.status}`
+         });
+       }
+       const data = await res.json();
+       return ok(data);
+     } catch (e) {
+       return err({ type: "network", message: e instanceof Error ? e.message : "Unknown" });
+     }
+   }
+
+   async function handle() {
+     const result = await fetchData("/api");
+     if (result.isErr()) {
+       console.error(result.error);
+       return;
+     }
+     // 成功時の処理
+     const data = result.value;
+   }
+   ```
+
+3. 局所的適用
+   - 全体に neverthrow を強制せず、特にネストが深くなりがちな部分に限定して導入
+   - 既存の try/catch を無理に置き換えず、可読性が向上する箇所から段階的に適用
+
+### 実装パターン
+
+1. 関数ベース（状態を持たない場合）
+
+   ```ts
+   // インターフェース
+   interface Logger {
+     log(message: string): void;
+   }
+
+   // 実装
+   function createLogger(): Logger {
+     return {
+       log(message: string): void {
+         console.log(`[${new Date().toISOString()}] ${message}`);
+       },
+     };
+   }
+   ```
+
+2. class ベース（状態を持つ場合）
+
+   ```ts
+   interface Cache<T> {
+     get(key: string): T | undefined;
+     set(key: string, value: T): void;
+   }
+
+   class TimeBasedCache<T> implements Cache<T> {
+     private items = new Map<string, { value: T; expireAt: number }>();
+
+     constructor(private ttlMs: number) {}
+
+     get(key: string): T | undefined {
+       const item = this.items.get(key);
+       if (!item || Date.now() > item.expireAt) {
+         return undefined;
+       }
+       return item.value;
+     }
+
+     set(key: string, value: T): void {
+       this.items.set(key, {
+         value,
+         expireAt: Date.now() + this.ttlMs,
+       });
+     }
+   }
+   ```
+
+3. Adapter パターン（外部依存の抽象化）
+
+   ```ts
+   // 抽象化
+   type Fetcher = <T>(path: string) => Promise<Result<T, ApiError>>;
+
+   // 実装
+   function createFetcher(headers: Record<string, string>): Fetcher {
+     return async <T>(path: string) => {
+       try {
+         const response = await fetch(path, { headers });
+         if (!response.ok) {
+           return err({
+             type: "network",
+             message: `HTTP error: ${response.status}`,
+           });
+         }
+         return ok(await response.json());
+       } catch (error) {
+         return err({
+           type: "network",
+           message: error instanceof Error ? error.message : "Unknown error",
+         });
+       }
+     };
+   }
+
+   // 利用
+   class ApiClient {
+     constructor(
+       private readonly getData: Fetcher,
+       private readonly baseUrl: string,
+     ) {}
+
+     async getUser(id: string): Promise<Result<User, ApiError>> {
+       return await this.getData(`${this.baseUrl}/users/${id}`);
+     }
+   }
+   ```
+
+### 実装の選択基準
+
+1. 関数を選ぶ場合
+
+   - 単純な操作のみ
+   - 内部状態が不要
+   - 依存が少ない
+   - テストが容易
+
+2. class を選ぶ場合
+
+   - 内部状態の管理が必要
+   - 設定やリソースの保持が必要
+   - メソッド間で状態を共有
+   - ライフサイクル管理が必要
+
+3. Adapter を選ぶ場合
+   - 外部依存の抽象化
+   - テスト時のモック化が必要
+   - 実装の詳細を隠蔽したい
+   - 差し替え可能性を確保したい
+
+### 一般的なルール
+
+1. 依存性の注入
+   - 外部依存はコンストラクタで注入
+   - テスト時にモックに置き換え可能に
+   - グローバルな状態を避ける
+
+2. インターフェースの設計
+   - 必要最小限のメソッドを定義
+   - 実装の詳細を含めない
+   - プラットフォーム固有の型を避ける
+
+3. テスト容易性
+   - モックの実装を簡潔に
+   - エッジケースのテストを含める
+   - テストヘルパーを適切に分離
+
+4. コードの分割
+   - 単一責任の原則に従う
+   - 適切な粒度でモジュール化
+   - 循環参照を避ける
+
+
+5. Logging
+   - `console.log()`などは使わず`utils/logger`の`logger.info` , `logger.error`などを使用してください
+
+6. 例外処理
+  - try-catchを多用しすぎないでください。必ず必要な箇所のみに使用し、ある処理の例外を一番外側の実装でcatchできるようにしてください
+  - できるだけneverthrowを使用し、正常系errorと思われるものは`Result`で返して下さい
+  - 無闇に例外をって、条件分岐などを行わないで下さい。予期できる例外や、例外を使う以外に条件分岐の判断を効果的に行う方法がある場合はそちらを優先してください。
+
+7. 早期リターンを活用しnestが深くなることを避けてください
+
+8. Naming Convention
+ - file-name: kebab case (e.g. `graph-state.ts`)
+
+9. `??`や`?.`などのoptional chainingを活用し、冗長な関数の作成などを避け、simpleな記述、readableかつsemanticな記述を心がけて下さい
+
+10. 不要な条件の考慮や、冗長な条件分岐を避けてください。必要十分な場家の考慮を行って下さい。条件考慮にビジネスロジックが絡んだり複雑になるようであれば適切な名前で関数に切り出して下さい。
+
+### モジュールのエクスポート
+
+#### default exportのみを使うべきケース
+
+- モジュールが1つの重要な機能だけを提供する場合
+- ライブラリや基盤部分など、名前の変更を利用する側が意識したくない場合
+- default exportとnamed exportを併用するケース
+- メイン機能とそれに付随する補助機能を提供する場合（例: Reactコンポーネントとその型）
+
+#### named exportのみを使うべきケース
+
+- 複数の関連機能を提供し、変更検知や検索性を重視する場合（例: ユーティリティ関数群）
+
+### Readable Code
+Readable codeに書かれていることを遵守、　**常に**読みやすいコードを書きなさい！！！
+**必ず**適切なsizeのコードチャンクで改行を入れて、読みやすいコード記述を徹底して下さい！！！
