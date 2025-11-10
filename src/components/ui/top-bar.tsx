@@ -92,7 +92,7 @@ export const TopBar: FC = () => {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm">
-      <div className="container mx-auto md:px-4 px-1 py-3">
+      <div className="container mx-auto md:px-4 px-2 py-3">
         <div className="grid w-full gap-y-3 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-x-6 md:gap-y-0">
           <div className="flex items-center justify-between md:justify-start">
             <h1 className="text-white text-xl font-bold font-cinzel-decorative">DOOM INDEX</h1>
