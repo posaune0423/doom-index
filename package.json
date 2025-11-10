@@ -16,6 +16,7 @@
     "cf-typegen": "wrangler types src/types/worker-configuration.d.ts --env-interface CloudflareBindings",
     "generate": "bun --env-file=.env scripts/generate.ts",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare versions upload",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
