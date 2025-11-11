@@ -41,12 +41,12 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
   useEffect(() => {
     if (previousThumbnailUrlRef.current === undefined) {
       previousThumbnailUrlRef.current = thumbnailUrl;
-      logger.info("gallery-scene.thumbnailUrl.initialized", { thumbnailUrl });
+      logger.debug("gallery-scene.thumbnailUrl.initialized", { thumbnailUrl });
       return;
     }
 
     if (previousThumbnailUrlRef.current !== thumbnailUrl) {
-      logger.info("gallery-scene.thumbnailUrl.changed", {
+      logger.debug("gallery-scene.thumbnailUrl.changed", {
         previousThumbnailUrl: previousThumbnailUrlRef.current,
         currentThumbnailUrl: thumbnailUrl,
         globalStateLastTs: globalState?.lastTs ?? null,

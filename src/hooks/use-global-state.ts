@@ -4,13 +4,13 @@ import type { GlobalState } from "@/types/domain";
 import { logger } from "@/utils/logger";
 
 const fetchGlobalState = async (): Promise<GlobalState | null> => {
-  logger.info("use-global-state.fetchGlobalState.start");
+  logger.debug("use-global-state.fetchGlobalState.start");
 
   const response = await fetch("/api/r2/state/global.json");
 
   if (!response.ok) {
     if (response.status === 404) {
-      logger.info("use-global-state.fetchGlobalState.notFound", { response: response.status });
+      logger.debug("use-global-state.fetchGlobalState.notFound", { response: response.status });
       return null;
     }
 
@@ -19,7 +19,7 @@ const fetchGlobalState = async (): Promise<GlobalState | null> => {
   }
 
   const data = (await response.json()) as GlobalState;
-  logger.info("use-global-state.fetchGlobalState.success", {
+  logger.debug("use-global-state.fetchGlobalState.success", {
     imageUrl: data?.imageUrl ?? null,
     lastTs: data?.lastTs ?? null,
     prevHash: data?.prevHash ?? null,
@@ -51,7 +51,7 @@ export const useGlobalState = () => {
 
     // log only when imageUrl changes
     if (previousImageUrlRef.current !== currentImageUrl) {
-      logger.info("use-global-state.dataUpdated", {
+      logger.debug("use-global-state.dataUpdated", {
         previousImageUrl: previousImageUrlRef.current ?? null,
         currentImageUrl: currentImageUrl ?? null,
         lastTs: queryResult.data?.lastTs ?? null,
@@ -69,9 +69,9 @@ export const useGlobalStateRefetch = () => {
   const { refetch } = useGlobalState();
 
   return async () => {
-    logger.info("use-global-state.refetch.triggered");
+    logger.debug("use-global-state.refetch.triggered");
     const result = await refetch({ cancelRefetch: false });
-    logger.info("use-global-state.refetch.completed", {
+    logger.debug("use-global-state.refetch.completed", {
       success: result.isSuccess,
       imageUrl: result.data?.imageUrl ?? null,
     });
