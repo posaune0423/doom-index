@@ -45,8 +45,8 @@ export const TopBarProgress: FC = () => {
     const handleMinuteBoundary = (previousSecond: number) => {
       if (previousSecond !== 0) {
         triggerHaptic();
-        playChime();
       }
+      playChime();
       refetchGlobalState().catch(error => {
         logger.error("top-bar-progress.refetchGlobalState.failed", { error });
       });
@@ -79,9 +79,6 @@ export const TopBarProgress: FC = () => {
         if (nextRemainingSeconds <= HAPTIC_WINDOW_START_REMAINING_SECOND && nextRemainingSeconds > 0) {
           triggerHaptic();
         }
-        if (nextRemainingSeconds === 0) {
-          playChime();
-        }
         setDisplaySecond(nextRemainingSeconds);
         lastDisplayedSecond = nextRemainingSeconds;
       }
@@ -97,7 +94,7 @@ export const TopBarProgress: FC = () => {
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [refetchGlobalState]);
+  }, [playChime, refetchGlobalState, triggerHaptic]);
 
   const secondsLabel = displaySecond.toString().padStart(2, "0");
 

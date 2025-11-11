@@ -10,9 +10,9 @@ interface ViewerRequest {
 
 export async function POST(request: Request) {
   try {
-    // Cloudflare環境からKV Namespaceを取得
+    // get KV Namespace from Cloudflare environment
     const { env } = await getCloudflareContext({ async: true });
-    const kvNamespace = (env as Cloudflare.Env).VIEWER_KV as KVNamespace | undefined;
+    const kvNamespace = (env as Cloudflare.Env).VIEWER_KV;
 
     if (!kvNamespace) {
       logger.error("viewer.api.error", {
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // リクエストボディをパース
+    // parse request body
     const body: ViewerRequest = await request.json();
 
     if (!body.sessionId) {
@@ -34,10 +34,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // ViewerServiceを作成
+    // create ViewerService
     const viewerService = createViewerService({ kvNamespace });
 
-    // bye=trueの場合は削除、それ以外は登録または更新
+    // if bye=true, remove viewer, otherwise register or update
     if (body.bye) {
       const result = await viewerService.removeViewer(body.sessionId);
       if (result.isErr()) {
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
       }
       logger.info("viewer.api.remove", { sessionId: body.sessionId });
     } else {
-      // 初回登録またはheartbeat更新
+      // first registration or heartbeat update
       const result = await viewerService.registerViewer(body.sessionId);
       if (result.isErr()) {
         logger.error("viewer.api.register.error", {

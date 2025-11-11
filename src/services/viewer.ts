@@ -51,13 +51,34 @@ export function createViewerService({ kvNamespace, log = logger }: ViewerService
   }
 
   async function hasActiveViewer(): Promise<Result<boolean, AppError>> {
-    const listResult = await listKv(kvNamespace, VIEWER_KEY_PREFIX, 1);
+    const listResult = await listKv(kvNamespace, VIEWER_KEY_PREFIX, 10);
     if (listResult.isErr()) {
       return err(listResult.error);
     }
-    const hasViewer = listResult.value.keys.length > 0;
-    log.debug("viewer.service.check", { hasViewer });
-    return ok(hasViewer);
+
+    const keys = listResult.value.keys;
+    if (keys.length === 0) {
+      log.debug("viewer.service.check", { hasViewer: false });
+      return ok(false);
+    }
+
+    // Check expiration field from list() response
+    // expiration is in absolute Unix timestamp format (even if set with TTL)
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    const hasActiveViewer = keys.some(keyInfo => {
+      // If expiration is not set, consider it as active (shouldn't happen with our TTL)
+      if (keyInfo.expiration === undefined) {
+        return true;
+      }
+      // Check if expiration is in the future
+      return keyInfo.expiration > nowSeconds;
+    });
+
+    log.debug("viewer.service.check", {
+      hasViewer: hasActiveViewer,
+      checkedKeys: keys.length,
+    });
+    return ok(hasActiveViewer);
   }
 
   return {

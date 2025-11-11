@@ -39,6 +39,24 @@ export async function putKv(
 }
 
 /**
+ * Get a value from KV namespace
+ */
+export async function getKv(kvNamespace: KVNamespace, key: string): Promise<Result<string | null, AppError>> {
+  try {
+    const value = await kvNamespace.get(key);
+    return ok(value);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return err({
+      type: "StorageError",
+      op: "get",
+      key,
+      message: `KV get failed: ${message}`,
+    });
+  }
+}
+
+/**
  * Delete a value from KV namespace
  */
 export async function deleteKv(kvNamespace: KVNamespace, key: string): Promise<Result<void, AppError>> {

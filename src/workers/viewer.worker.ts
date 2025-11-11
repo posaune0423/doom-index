@@ -1,4 +1,4 @@
-export default {}; // for TypeScript warning
+export default null; // TypeScript warning
 
 const endpoint = "/api/viewer";
 
