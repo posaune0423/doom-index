@@ -1,6 +1,7 @@
+import { DEV_FUN_URL } from "@/constants";
+
 interface TweetIntentOptions {
   shareUrl?: string;
-  assetUrl?: string;
   lines?: string[];
 }
 
@@ -8,14 +9,12 @@ const DEFAULT_TWEET_LINES = [
   "Just touched this piece inside the DOOM Index gallery.",
   "Market-driven art reacting in real time 🤯",
   "$DOOM #doomindex #devfun #pumpfun",
-  `Join the experience 👉 https://doom-index.yamadaasuma.workers.dev`,
 ];
 
 const TWITTER_INTENT_URL = "https://twitter.com/intent/tweet";
 
 export const buildTweetIntentUrl = ({
   shareUrl,
-  assetUrl,
   lines = DEFAULT_TWEET_LINES,
 }: TweetIntentOptions): string => {
   const url = new URL(TWITTER_INTENT_URL);
@@ -23,10 +22,6 @@ export const buildTweetIntentUrl = ({
 
   if (shareUrl) {
     candidateLines.push(shareUrl);
-  }
-
-  if (assetUrl) {
-    candidateLines.push(assetUrl);
   }
 
   const deduplicatedLines = candidateLines.reduce<string[]>((acc, line) => {
@@ -53,7 +48,7 @@ export const openTweetIntent = (options?: TweetIntentOptions) => {
     return;
   }
 
-  const { shareUrl = window.location.href, ...rest } = options ?? {};
+  const { shareUrl = DEV_FUN_URL, ...rest } = options ?? {};
   const intentUrl = buildTweetIntentUrl({
     shareUrl,
     ...rest,

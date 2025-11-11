@@ -500,7 +500,7 @@ export const FramedPainting: React.FC<FramedPaintingProps> = ({
     event.stopPropagation();
 
     window.setTimeout(() => {
-      openTweetIntent({ assetUrl: thumbnailUrl });
+      openTweetIntent();
     }, PULSE_DURATION * 1000);
 
     return true;
