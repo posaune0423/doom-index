@@ -11,7 +11,7 @@ compatibility_flags = [
 
 # Cron Triggers
 [triggers]
-crons = ["0 * * * *"] # Every hour
+crons = ["30 * * * * *"] # Every 60 seconds (at 30 seconds past each minute)
 
 # R2 Bucket Binding
 [[r2_buckets]]
@@ -39,9 +39,9 @@ service = "doom-index"
 [vars]
 NODE_ENV = "production"
 LOG_LEVEL = "DEBUG"
-NEXTJS_ENV="production"
-NEXT_PUBLIC_BASE_URL="https://doom-index.yamadaasuma.workers.dev"
-IMAGE_MODEL="runware:100@1"
+NEXTJS_ENV = "production"
+NEXT_PUBLIC_BASE_URL = "https://doom-index.yamadaasuma.workers.dev"
+IMAGE_MODEL = "runware:100@1"
 
 [observability]
 enabled = false
