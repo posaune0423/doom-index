@@ -20,7 +20,7 @@ export const createRunwareProvider = (): ImageProvider => ({
     const apiKey = env.RUNWARE_API_KEY; //already validated in env.ts
 
     try {
-      const timeoutMs = options?.timeoutMs ?? 15_000;
+      const timeoutMs = options?.timeoutMs ?? 30_000;
       const runware = new RunwareClient({
         apiKey,
         timeoutMs,
