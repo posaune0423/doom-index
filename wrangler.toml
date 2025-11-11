@@ -11,7 +11,7 @@ compatibility_flags = [
 
 # Cron Triggers
 [triggers]
-crons = ["30 * * * * *"] # Every 60 seconds (at 30 seconds past each minute)
+crons = ["* * * * *"] # Every minute
 
 # R2 Bucket Binding
 [[r2_buckets]]
