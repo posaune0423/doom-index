@@ -225,10 +225,7 @@ export default async function Image(): Promise<ImageResponse> {
   } catch (error) {
     logger.error("ogp.error", {
       route: "/opengraph-image",
-      error:
-        error instanceof Error
-          ? { message: error.message, stack: error.stack }
-          : { message: String(error) },
+      error: error instanceof Error ? { message: error.message, stack: error.stack } : { message: String(error) },
       durationMs: Date.now() - startTime,
     });
 

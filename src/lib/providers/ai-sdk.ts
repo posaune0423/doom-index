@@ -5,6 +5,7 @@ import type { ImageModel } from "ai";
 import type { ImageGenerationOptions, ImageProvider, ImageRequest } from "@/types/domain";
 import type { AppError } from "@/types/app-error";
 import { logger } from "@/utils/logger";
+import { getErrorMessage } from "@/utils/error";
 
 type OpenAiProviderMetadata = {
   images?: Array<{
@@ -155,7 +156,7 @@ export const createAiSdkProvider = (): ImageProvider => ({
       return err({
         type: "ExternalApiError",
         provider: "ImageProvider",
-        message: error instanceof Error ? error.message : String(error),
+        message: getErrorMessage(error),
       } as AppError);
     }
   },

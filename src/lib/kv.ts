@@ -9,6 +9,7 @@
 
 import { err, ok, Result } from "neverthrow";
 import type { AppError } from "@/types/app-error";
+import { getErrorMessage } from "@/utils/error";
 
 export type KvPutOptions = {
   expirationTtl?: number;
@@ -28,12 +29,11 @@ export async function putKv(
     await kvNamespace.put(key, value, options);
     return ok(undefined);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
     return err({
       type: "StorageError",
       op: "put",
       key,
-      message: `KV put failed: ${message}`,
+      message: `KV put failed: ${getErrorMessage(error)}`,
     });
   }
 }
@@ -46,12 +46,11 @@ export async function getKv(kvNamespace: KVNamespace, key: string): Promise<Resu
     const value = await kvNamespace.get(key);
     return ok(value);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
     return err({
       type: "StorageError",
       op: "get",
       key,
-      message: `KV get failed: ${message}`,
+      message: `KV get failed: ${getErrorMessage(error)}`,
     });
   }
 }
@@ -64,12 +63,11 @@ export async function deleteKv(kvNamespace: KVNamespace, key: string): Promise<R
     await kvNamespace.delete(key);
     return ok(undefined);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
     return err({
       type: "StorageError",
       op: "delete",
       key,
-      message: `KV delete failed: ${message}`,
+      message: `KV delete failed: ${getErrorMessage(error)}`,
     });
   }
 }
@@ -90,12 +88,11 @@ export async function listKv(
       }),
     );
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
     return err({
       type: "StorageError",
       op: "list",
       key: prefix,
-      message: `KV list failed: ${message}`,
+      message: `KV list failed: ${getErrorMessage(error)}`,
     });
   }
 }

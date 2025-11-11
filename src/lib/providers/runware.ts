@@ -3,6 +3,7 @@ import type { ImageGenerationOptions, ImageProvider, ImageRequest } from "@/type
 import type { AppError } from "@/types/app-error";
 import { logger } from "@/utils/logger";
 import { base64ToArrayBuffer } from "@/utils/image";
+import { getErrorMessage } from "@/utils/error";
 import { env } from "@/env";
 import { RunwareClient } from "@/lib/runware-client";
 
@@ -98,7 +99,7 @@ export const createRunwareProvider = (): ImageProvider => ({
       return err({
         type: "ExternalApiError",
         provider: "ImageProvider",
-        message: error instanceof Error ? error.message : String(error),
+        message: getErrorMessage(error),
       } as AppError);
     }
   },

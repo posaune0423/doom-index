@@ -2,14 +2,25 @@ import { NextResponse } from "next/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { logger } from "@/utils/logger";
 import { createViewerService } from "@/services/viewer";
+import { isBotUserAgent } from "@/utils/user-agent";
+import { getErrorMessage } from "@/utils/error";
 
 interface ViewerRequest {
   sessionId: string;
+  userAgent?: string;
   bye?: boolean;
 }
 
 export async function POST(request: Request) {
   try {
+    // Check user agent from request headers
+    const requestUserAgent = request.headers.get("user-agent");
+    if (isBotUserAgent(requestUserAgent)) {
+      // Ignore bot/crawler requests
+      logger.debug("viewer.api.bot-ignored", { userAgent: requestUserAgent });
+      return NextResponse.json({ success: false, error: "Bot requests are ignored" }, { status: 403 });
+    }
+
     // get KV Namespace from Cloudflare environment
     const { env } = await getCloudflareContext({ async: true });
     const kvNamespace = (env as Cloudflare.Env).VIEWER_KV;
@@ -26,6 +37,12 @@ export async function POST(request: Request) {
 
     if (!body.sessionId) {
       return NextResponse.json({ success: false, error: "sessionId is required" }, { status: 400 });
+    }
+
+    // Also check user agent from request body (sent by worker)
+    if (body.userAgent && isBotUserAgent(body.userAgent)) {
+      logger.debug("viewer.api.bot-ignored", { userAgent: body.userAgent, sessionId: body.sessionId });
+      return NextResponse.json({ success: false, error: "Bot requests are ignored" }, { status: 403 });
     }
 
     // create ViewerService
@@ -57,8 +74,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    logger.error("viewer.api.error", { error: message });
+    logger.error("viewer.api.error", { error: getErrorMessage(error) });
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }

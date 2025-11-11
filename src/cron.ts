@@ -9,6 +9,7 @@
 import { createServicesForWorkers } from "./services/container";
 import { createViewerService } from "./services/viewer";
 import { logger } from "./utils/logger";
+import { getErrorMessage, getErrorStack } from "./utils/error";
 
 /**
  * Processing logic for Cron execution
@@ -77,12 +78,9 @@ export async function handleScheduledEvent(
       durationMs: Date.now() - startTime,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    const stack = error instanceof Error ? error.stack : undefined;
-
     console.error("Cron failed", {
-      error: message,
-      stack,
+      error: getErrorMessage(error),
+      stack: getErrorStack(error),
       durationMs: Date.now() - startTime,
     });
   }

@@ -10,6 +10,7 @@ import { cache } from "react";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { err, ok, Result } from "neverthrow";
 import type { AppError } from "@/types/app-error";
+import { getErrorMessage } from "@/utils/error";
 
 export type R2PutOptions = {
   contentType?: string;
@@ -45,8 +46,7 @@ export function resolveR2Bucket(): Result<R2Bucket, AppError> {
     }
     return ok(bucket);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return err(contextError(`Failed to resolve Cloudflare context: ${message}`, error));
+    return err(contextError(`Failed to resolve Cloudflare context: ${getErrorMessage(error)}`, error));
   }
 }
 
@@ -62,8 +62,7 @@ export async function resolveR2BucketAsync(): Promise<Result<R2Bucket, AppError>
     }
     return ok(bucket);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return err(contextError(`Failed to resolve Cloudflare context asynchronously: ${message}`, error));
+    return err(contextError(`Failed to resolve Cloudflare context asynchronously: ${getErrorMessage(error)}`, error));
   }
 }
 
@@ -79,12 +78,11 @@ export async function putJsonR2(bucket: R2Bucket, key: string, data: unknown): P
     });
     return ok(undefined);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
     return err({
       type: "StorageError",
       op: "put",
       key,
-      message: `R2 JSON put failed: ${message}`,
+      message: `R2 JSON put failed: ${getErrorMessage(error)}`,
     });
   }
 }
@@ -100,12 +98,11 @@ export async function getJsonR2<T>(bucket: R2Bucket, key: string): Promise<Resul
     const text = await obj.text();
     return ok(JSON.parse(text) as T);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
     return err({
       type: "StorageError",
       op: "get",
       key,
-      message: `R2 JSON get failed: ${message}`,
+      message: `R2 JSON get failed: ${getErrorMessage(error)}`,
     });
   }
 }
@@ -127,12 +124,11 @@ export async function putImageR2(
     });
     return ok(undefined);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
     return err({
       type: "StorageError",
       op: "put",
       key,
-      message: `R2 image put failed: ${message}`,
+      message: `R2 image put failed: ${getErrorMessage(error)}`,
     });
   }
 }
@@ -148,12 +144,11 @@ export async function getImageR2(bucket: R2Bucket, key: string): Promise<Result<
     const arrayBuffer = await obj.arrayBuffer();
     return ok(arrayBuffer);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
     return err({
       type: "StorageError",
       op: "get",
       key,
-      message: `R2 image get failed: ${message}`,
+      message: `R2 image get failed: ${getErrorMessage(error)}`,
     });
   }
 }
