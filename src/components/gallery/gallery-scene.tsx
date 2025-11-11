@@ -32,6 +32,11 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
   const { data: globalState } = useGlobalState();
   const thumbnailUrl = globalState?.imageUrl ?? DEFAULT_THUMBNAIL;
 
+  const onButtonClick = (preset: "dashboard" | "painting") => {
+    triggerHaptic();
+    setCurrentCameraPreset(preset);
+  };
+
   const previousThumbnailUrlRef = useRef<string | undefined>(undefined);
   useEffect(() => {
     if (previousThumbnailUrlRef.current === undefined) {
@@ -166,7 +171,7 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
           <button
             key={preset}
             type="button"
-            onClick={() => setCurrentCameraPreset(preset)}
+            onClick={() => onButtonClick(preset)}
             onPointerDown={e => {
               triggerHaptic();
               e.currentTarget.style.transform = "scale(0.95)";
