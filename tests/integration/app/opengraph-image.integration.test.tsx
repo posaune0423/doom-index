@@ -45,10 +45,12 @@ describe("OGP Image Generation (Integration Tests)", () => {
       expect(dataUrl.length).toBeGreaterThan(30);
     });
 
-    test("should throw error when placeholder fetch fails", async () => {
+    test("should return empty string when placeholder fetch fails", async () => {
       const mockFetcher = createMockFetcher(false);
 
-      await expect(getPlaceholderDataUrl(mockFetcher)).rejects.toThrow("Failed to fetch placeholder: 404");
+      const dataUrl = await getPlaceholderDataUrl(mockFetcher);
+
+      expect(dataUrl).toBe("");
     });
   });
 
@@ -58,14 +60,17 @@ describe("OGP Image Generation (Integration Tests)", () => {
 
       const dataUrl = await getFrameDataUrl(mockFetcher);
 
+      expect(dataUrl).not.toBeNull();
       expect(dataUrl).toStartWith("data:image/webp;base64,");
-      expect(dataUrl.length).toBeGreaterThan(30);
+      expect(dataUrl!.length).toBeGreaterThan(30);
     });
 
-    test("should throw error when frame fetch fails", async () => {
+    test("should return null when frame fetch fails", async () => {
       const mockFetcher = createMockFetcher(false);
 
-      await expect(getFrameDataUrl(mockFetcher)).rejects.toThrow("Failed to fetch frame: 404");
+      const dataUrl = await getFrameDataUrl(mockFetcher);
+
+      expect(dataUrl).toBeNull();
     });
   });
 

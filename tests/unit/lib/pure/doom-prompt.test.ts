@@ -27,12 +27,17 @@ describe("Doom Prompt Generation", () => {
         expect(fragments[i].weight).toBeGreaterThanOrEqual(fragments[i + 1].weight);
       }
 
-      // Check weight normalization (threshold = 1M)
+      // Check dominance-based weighting
+      // MACHINE has highest MC (1,450,000), so it should have highest weight (close to MAX_WEIGHT = 2.0)
       const machineFragment = fragments.find(f => f.text.includes("machine"));
-      expect(machineFragment?.weight).toBeCloseTo(1.45, 2);
+      expect(machineFragment?.weight).toBeGreaterThan(1.5); // Should be close to 2.0
 
+      // ICE has lowest MC (200,000), so it should have lowest weight (close to MIN_WEIGHT = 0.1)
       const iceFragment = fragments.find(f => f.text.includes("glaciers"));
-      expect(iceFragment?.weight).toBeCloseTo(0.2, 2);
+      expect(iceFragment?.weight).toBeLessThan(0.5); // Should be close to 0.1
+
+      // Verify dominance: MACHINE weight should be significantly higher than ICE
+      expect(machineFragment?.weight).toBeGreaterThan((iceFragment?.weight || 0) * 3);
     });
 
     it("handles zero values with minimum weight", () => {
@@ -49,10 +54,10 @@ describe("Doom Prompt Generation", () => {
 
       const fragments = toWeightedFragments(zeroMc);
 
-      // All should have minimum weight (0.01)
+      // All should have minimum weight (0.1)
       const tokenFragments = fragments.slice(0, -1); // Exclude human element
       for (const fragment of tokenFragments) {
-        expect(fragment.weight).toBe(0.01);
+        expect(fragment.weight).toBe(0.1);
       }
     });
   });

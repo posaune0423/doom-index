@@ -5,12 +5,51 @@
 
 import type { TokenTicker, McMap } from "@/constants/token";
 
-const THRESHOLD = 1_000_000;
-const MIN_WEIGHT = 0.01;
-const MAX_WEIGHT = 1.5;
+const MIN_WEIGHT = 0.1;
+const MAX_WEIGHT = 2.0;
+const DOMINANCE_EXPONENT = 2.5; // Higher exponent = stronger dominance emphasis
 
-const clamp = (x: number, min = 0, max = MAX_WEIGHT) => Math.max(min, Math.min(max, x));
-const normalize = (mc: number) => clamp(mc / THRESHOLD);
+const clamp = (x: number, min = MIN_WEIGHT, max = MAX_WEIGHT) => Math.max(min, Math.min(max, x));
+
+/**
+ * Calculate relative dominance-based weights
+ * Emphasizes differences between tokens by using relative ratios
+ * and applying non-linear transformation to amplify dominance
+ */
+function calculateDominanceWeights(mc: McMap): Record<TokenTicker, number> {
+  const tokens: TokenTicker[] = ["CO2", "ICE", "FOREST", "NUKE", "MACHINE", "PANDEMIC", "FEAR", "HOPE"];
+
+  // Find max market cap (dominant token)
+  const maxMc = Math.max(...tokens.map(t => mc[t] || 0));
+
+  if (maxMc === 0) {
+    // All zeros: return uniform minimum weights
+    return tokens.reduce((acc, t) => ({ ...acc, [t]: MIN_WEIGHT }), {} as Record<TokenTicker, number>);
+  }
+
+  // Calculate relative ratios (0 to 1)
+  const ratios = tokens.reduce((acc, t) => {
+    const ratio = (mc[t] || 0) / maxMc;
+    acc[t] = ratio;
+    return acc;
+  }, {} as Record<TokenTicker, number>);
+
+  // Apply non-linear transformation to emphasize dominance
+  // Higher exponent makes dominant tokens stand out more
+  const transformed = tokens.reduce((acc, t) => {
+    const ratio = ratios[t];
+    // Apply power function: ratio^exponent
+    // This makes small differences more pronounced
+    const transformedRatio = Math.pow(ratio, DOMINANCE_EXPONENT);
+    // Map to weight range: MIN_WEIGHT to MAX_WEIGHT
+    const weight = MIN_WEIGHT + transformedRatio * (MAX_WEIGHT - MIN_WEIGHT);
+    acc[t] = clamp(weight);
+    return acc;
+  }, {} as Record<TokenTicker, number>);
+
+  return transformed;
+}
+
 const safeWeight = (w: number) => (w === 0 ? MIN_WEIGHT : w);
 
 /**
@@ -50,14 +89,18 @@ export type WeightedFragment = {
 
 /**
  * Convert market cap map to weighted fragments
+ * Uses relative dominance-based weighting to emphasize differences
  * Sorted by weight (descending) for generation stability
  */
 export function toWeightedFragments(mc: McMap): WeightedFragment[] {
   const tokens: TokenTicker[] = ["CO2", "ICE", "FOREST", "NUKE", "MACHINE", "PANDEMIC", "FEAR", "HOPE"];
 
+  // Calculate dominance-based weights
+  const weights = calculateDominanceWeights(mc);
+
   const fragments = tokens.map(ticker => ({
     text: TOKEN_PHRASE[ticker],
-    weight: safeWeight(normalize(mc[ticker])),
+    weight: safeWeight(weights[ticker]),
   }));
 
   // Sort by weight descending
