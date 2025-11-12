@@ -3,6 +3,7 @@ import { Cinzel_Decorative } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/app/providers";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { getBaseUrl } from "@/utils/url";
 
 const cinzelDecorative = Cinzel_Decorative({
   variable: "--font-cinzel-decorative",
@@ -25,8 +26,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const description =
     "8 global indicators ($CO2, $ICE, $FOREST, $NUKE, $MACHINE, $PANDEMIC, $FEAR, $HOPE) visualized as generative art in real-time.";
   const title = "DOOM INDEX - Every buy paints the apocalypse.";
-  // Use environment variable, fallback to production URL if not set
-  const metadataBase = new URL("https://doom-index.yamadaasuma.workers.dev");
+  // Use environment-based URL
+  const metadataBase = new URL(getBaseUrl());
   const ogImageUrl = new URL("/opengraph-image", metadataBase).toString();
   const ogImageAlt = "DOOM INDEX - Current Every buy paints the apocalypse.";
 

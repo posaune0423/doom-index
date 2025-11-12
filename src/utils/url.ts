@@ -7,7 +7,7 @@ import { env } from "@/env";
  * @returns Base URL with protocol and host (e.g., "http://localhost:8787" or "https://example.com")
  */
 export function getBaseUrl(): string {
-  const baseUrl = env.NEXT_PUBLIC_BASE_URL;
+  const baseUrl = env.NEXT_PUBLIC_BASE_URL ?? "https://doom-index.yamadaasuma.workers.dev";
   return baseUrl;
 }
 
