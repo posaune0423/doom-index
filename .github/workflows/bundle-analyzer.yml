@@ -27,7 +27,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build with opennextjs-cloudflare
-        run: bun run build:cloudflare
+        run: bun run build:cf
 
       - name: Analyze esbuild bundle size
         uses: exoego/esbuild-bundle-analyzer@v1
