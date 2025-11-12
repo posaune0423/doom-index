@@ -60,6 +60,13 @@ export function createGenerationService({
   generationRate = 1,
   log = logger,
 }: GenerationDeps): GenerationService {
+  /**
+   * Evaluate the minute generation
+   * If the generation is skipped, return a result with the status "skipped"
+   * If the generation is successful, return a result with the status "generated"
+   * If the generation fails, return a result with the error
+   * @returns {Promise<Result<MinuteEvaluation, AppError>>}
+   */
   async function evaluateMinute(): Promise<Result<MinuteEvaluation, AppError>> {
     const mcResult = await marketCapService.getMcMap();
     if (mcResult.isErr()) return err(mcResult.error);

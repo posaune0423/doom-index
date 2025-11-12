@@ -3,7 +3,7 @@ import type { VisualParams } from "@/lib/pure/mapping";
 import type { PromptVersion } from "@/types/prompt";
 
 const formatTokenSnapshot = (mcRounded: McMapRounded): string =>
-  TOKEN_TICKERS.map(ticker => `${ticker}=${mcRounded[ticker].toFixed(4)}`).join(", ");
+  TOKEN_TICKERS.map(ticker => `${ticker}=${mcRounded[ticker].toFixed(6)}`).join(", ");
 
 const formatVisualParams = (visualParams: VisualParams): string =>
   Object.entries(visualParams)
@@ -13,7 +13,7 @@ const formatVisualParams = (visualParams: VisualParams): string =>
 const formatInfluenceNarrative = (mcRounded: McMapRounded): string =>
   TOKEN_TICKERS.map(ticker => {
     const [primary, secondary] = TOKEN_AXIS_MAP[ticker];
-    return `${ticker.toLowerCase()}→${primary}/${secondary}=${mcRounded[ticker].toFixed(4)}`;
+    return `${ticker.toLowerCase()}→${primary}/${secondary}=${mcRounded[ticker].toFixed(6)}`;
   }).join("; ");
 
 export type PromptContext = {
