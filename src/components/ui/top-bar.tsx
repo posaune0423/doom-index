@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type FC, type SVGProps } from "react";
 
-import { DevFunIcon } from "@/components/icons/dev-fun-icon";
+import { PumpFunIcon } from "@/components/icons/pump-fun-icon";
 import { GitHubIcon } from "@/components/icons/github-icon";
 import { XIcon } from "@/components/icons/x-icon";
-import { DEV_FUN_URL, GITHUB_URL, X_URL } from "@/constants";
+import { GITHUB_URL, X_URL } from "@/constants";
 
 import { TopBarProgress } from "./top-bar-progress";
 
@@ -28,9 +28,9 @@ const NAV_LINKS: NavLinkConfig[] = [
     Icon: XIcon,
   },
   {
-    href: DEV_FUN_URL,
-    label: "Dev.fun",
-    Icon: DevFunIcon,
+    href: "https://pump.fun/coin/AJfn5M1bWeSsZDq89TgkKXm7AdtAQCsqzkYRxYGoqdev",
+    label: "Pump.fun",
+    Icon: PumpFunIcon,
   },
 ];
 
