@@ -251,6 +251,41 @@ export async function getArtworkDataUrl(
 
 
 /**
+ * Validate data URL format and size
+ * Returns true if valid, false otherwise
+ */
+function isValidDataUrl(dataUrl: string, maxSizeBytes = 5 * 1024 * 1024): boolean {
+  if (!dataUrl || typeof dataUrl !== "string") {
+    return false;
+  }
+
+  // Check format: data:image/xxx;base64,...
+  if (!dataUrl.startsWith("data:image/") || !dataUrl.includes(";base64,")) {
+    return false;
+  }
+
+  // Extract base64 part and estimate size
+  const base64Part = dataUrl.split(",", 2)[1];
+  if (!base64Part) {
+    return false;
+  }
+
+  // Base64 size estimation: base64 is ~33% larger than binary
+  // Rough estimate: base64Length * 3/4 gives approximate binary size
+  const estimatedSize = (base64Part.length * 3) / 4;
+  if (estimatedSize > maxSizeBytes) {
+    logger.warn("ogp.data-url-too-large", {
+      estimatedSizeBytes: estimatedSize,
+      maxSizeBytes,
+      dataUrlLength: dataUrl.length,
+    });
+    return false;
+  }
+
+  return true;
+}
+
+/**
  * Render ImageResponse with artwork and optional frame
  * Never throws - always returns a valid ImageResponse
  */
@@ -270,57 +305,89 @@ function renderImageResponse(
       ...(fallbackLevel && { fallbackLevel }),
     });
 
-    // Ensure dataUrl is valid - if empty, use text fallback
-    if (!dataUrl) {
+    // Ensure dataUrl is valid - if empty or invalid, use text fallback
+    if (!dataUrl || !isValidDataUrl(dataUrl)) {
+      logger.warn("ogp.invalid-data-url", {
+        hasDataUrl: !!dataUrl,
+        dataUrlLength: dataUrl?.length || 0,
+      });
       return renderTextFallback();
     }
 
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            height: "100%",
-            backgroundColor: "#000000",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
-          }}
-        >
-          {/* Artwork image (centered, behind frame) */}
-          <img
-            src={dataUrl}
+    // Validate frameDataUrl if provided
+    if (frameDataUrl && !isValidDataUrl(frameDataUrl)) {
+      logger.warn("ogp.invalid-frame-data-url", {
+        frameDataUrlLength: frameDataUrl.length,
+      });
+      frameDataUrl = null; // Continue without frame
+    }
+
+    // Create ImageResponse with error handling
+    try {
+      const response = new ImageResponse(
+        (
+          <div
             style={{
-              position: "absolute",
+              display: "flex",
+              width: "100%",
               height: "100%",
-              width: "auto",
-              objectFit: "contain",
+              backgroundColor: "#000000",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "relative",
             }}
-            alt={alt}
-          />
-          {/* Frame overlay (on top) - only if available */}
-          {frameDataUrl && (
+          >
+            {/* Artwork image (centered, behind frame) */}
             <img
-              src={frameDataUrl}
+              src={dataUrl}
               style={{
                 position: "absolute",
-                width: "100%",
                 height: "100%",
-                objectFit: "cover",
+                width: "auto",
+                objectFit: "contain",
               }}
-              alt="Frame"
+              alt={alt}
             />
-          )}
-        </div>
-      ),
-      {
-        ...size,
-        headers: {
-          "Cache-Control": fallbackUsed ? "public, max-age=300" : "public, max-age=60, stale-while-revalidate=30",
+            {/* Frame overlay (on top) - only if available */}
+            {frameDataUrl && (
+              <img
+                src={frameDataUrl}
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+                alt="Frame"
+              />
+            )}
+          </div>
+        ),
+        {
+          ...size,
+          headers: {
+            "Cache-Control": fallbackUsed ? "public, max-age=300" : "public, max-age=60, stale-while-revalidate=30",
+          },
         },
-      },
-    );
+      );
+
+      // Verify response is valid
+      if (!response || !(response instanceof Response)) {
+        throw new Error("ImageResponse creation returned invalid response");
+      }
+
+      return response;
+    } catch (imageResponseError) {
+      logger.error("ogp.image-response-creation-error", {
+        error: imageResponseError instanceof Error
+          ? { message: imageResponseError.message, stack: imageResponseError.stack }
+          : { message: String(imageResponseError) },
+        dataUrlLength: dataUrl.length,
+        hasFrame: frameDataUrl !== null,
+      });
+      // Fallback to text-only response
+      return renderTextFallback();
+    }
   } catch (error) {
     logger.error("ogp.render-error", {
       error: error instanceof Error ? { message: error.message, stack: error.stack } : { message: String(error) },
