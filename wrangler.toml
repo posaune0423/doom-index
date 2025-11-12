@@ -1,5 +1,6 @@
 # Cloudflare Workers Configuration for DOOM INDEX
 
+
 name = "doom-index"
 main = "./src/worker.ts"
 compatibility_date = "2025-03-25"
@@ -12,6 +13,10 @@ compatibility_flags = [
 # Cron Triggers
 [triggers]
 crons = ["* * * * *"] # Every minute
+
+[[routes]]
+pattern = "doomindex.fun"
+custom_domain = true
 
 # R2 Bucket Binding
 [[r2_buckets]]
@@ -40,7 +45,7 @@ service = "doom-index"
 NODE_ENV = "production"
 LOG_LEVEL = "INFO"
 NEXTJS_ENV = "production"
-NEXT_PUBLIC_BASE_URL = "https://doom-index.yamadaasuma.workers.dev"
+NEXT_PUBLIC_BASE_URL = "https://doomindex.fun"
 IMAGE_MODEL = "runware:100@1"
 
 [observability]
