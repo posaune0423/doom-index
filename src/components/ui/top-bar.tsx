@@ -37,7 +37,11 @@ const NAV_LINKS: NavLinkConfig[] = [
 const DESKTOP_LINK_CLASS =
   "group flex h-7 w-7 items-center justify-center rounded-full border border-white/15 text-white/70 transition-colors hover:border-white/40 hover:text-white";
 
-export const TopBar: FC = () => {
+interface TopBarProps {
+  onAboutClick?: () => void;
+}
+
+export const TopBar: FC<TopBarProps> = ({ onAboutClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -123,6 +127,19 @@ export const TopBar: FC = () => {
                   aria-label="External Links"
                   className="absolute right-0 top-full mt-3 flex w-48 flex-col gap-1 rounded-xl border border-white/20 bg-white/10 p-3 text-white/90 shadow-2xl backdrop-blur-lg"
                 >
+                  {onAboutClick && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onAboutClick();
+                        closeMenu();
+                      }}
+                      className="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-white/10 hover:text-white text-left w-full"
+                    >
+                      <span className="h-4 w-4 flex items-center justify-center text-base">ℹ</span>
+                      <span>About</span>
+                    </button>
+                  )}
                   {NAV_LINKS.map(({ href, label, Icon }) => (
                     <Link
                       key={href}

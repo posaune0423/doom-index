@@ -15,6 +15,8 @@ import { logger } from "@/utils/logger";
 interface GallerySceneProps {
   cameraPreset?: "dashboard" | "painting";
   showDashboard?: boolean;
+  isHelpOpen?: boolean;
+  onHelpToggle?: (open: boolean) => void;
 }
 
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -23,8 +25,12 @@ const DEFAULT_THUMBNAIL = "/placeholder-painting.webp";
 export const GalleryScene: React.FC<GallerySceneProps> = ({
   cameraPreset: initialCameraPreset = "painting",
   showDashboard = true,
+  isHelpOpen: externalIsHelpOpen,
+  onHelpToggle: externalOnHelpToggle,
 }) => {
-  const [isDashboardHelpOpen, setIsDashboardHelpOpen] = useState(false);
+  const [internalIsHelpOpen, setInternalIsHelpOpen] = useState(false);
+  const isDashboardHelpOpen = externalIsHelpOpen ?? internalIsHelpOpen;
+  const setIsDashboardHelpOpen = externalOnHelpToggle ?? setInternalIsHelpOpen;
   const [currentCameraPreset, setCurrentCameraPreset] = useState<"dashboard" | "painting">(initialCameraPreset);
 
   const { triggerHaptic } = useHaptic();
