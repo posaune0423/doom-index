@@ -1,5 +1,12 @@
 import { describe, it, expect } from "bun:test";
-import { toWeightedFragments, buildSDXLPrompt, buildGenericPayload } from "@/lib/pure/doom-prompt";
+import {
+  calculateDominanceWeights,
+  toWeightedFragments,
+  buildSDXLPrompt,
+  buildGenericPayload,
+  DEFAULT_DOMINANCE_CONFIG,
+  type DominanceWeightConfig,
+} from "@/lib/pure/doom-prompt";
 import type { McMap } from "@/constants/token";
 
 describe("Doom Prompt Generation", () => {
@@ -13,6 +20,94 @@ describe("Doom Prompt Generation", () => {
     FEAR: 1_100_000,
     HOPE: 400_000,
   };
+
+  describe("calculateDominanceWeights", () => {
+    it("calculates weights based on relative dominance", () => {
+      const weights = calculateDominanceWeights(testMc);
+
+      // MACHINE has highest MC, should have highest weight
+      expect(weights.MACHINE).toBeGreaterThan(weights.ICE);
+      expect(weights.MACHINE).toBeGreaterThan(weights.NUKE);
+
+      // All weights should be within range
+      for (const weight of Object.values(weights)) {
+        expect(weight).toBeGreaterThanOrEqual(DEFAULT_DOMINANCE_CONFIG.minWeight);
+        expect(weight).toBeLessThanOrEqual(DEFAULT_DOMINANCE_CONFIG.maxWeight);
+      }
+    });
+
+    it("handles zero values with minimum weight", () => {
+      const zeroMc: McMap = {
+        CO2: 0,
+        ICE: 0,
+        FOREST: 0,
+        NUKE: 0,
+        MACHINE: 0,
+        PANDEMIC: 0,
+        FEAR: 0,
+        HOPE: 0,
+      };
+
+      const weights = calculateDominanceWeights(zeroMc);
+
+      // All should have minimum weight
+      for (const weight of Object.values(weights)) {
+        expect(weight).toBe(DEFAULT_DOMINANCE_CONFIG.minWeight);
+      }
+    });
+
+    it("accepts custom configuration", () => {
+      const customConfig: DominanceWeightConfig = {
+        minWeight: 0.5,
+        maxWeight: 3.0,
+        exponent: 1.5,
+        tokens: ["MACHINE", "ICE"] as const,
+      };
+
+      const weights = calculateDominanceWeights(testMc, customConfig);
+
+      // Only specified tokens should be in result
+      expect(Object.keys(weights)).toHaveLength(2);
+      expect(weights.MACHINE).toBeDefined();
+      expect(weights.ICE).toBeDefined();
+
+      // Weights should respect custom range
+      expect(weights.MACHINE).toBeGreaterThanOrEqual(customConfig.minWeight);
+      expect(weights.MACHINE).toBeLessThanOrEqual(customConfig.maxWeight);
+      expect(weights.ICE).toBeGreaterThanOrEqual(customConfig.minWeight);
+      expect(weights.ICE).toBeLessThanOrEqual(customConfig.maxWeight);
+
+      // MACHINE should still be higher than ICE
+      expect(weights.MACHINE).toBeGreaterThan(weights.ICE);
+    });
+
+    it("is a pure function: same input produces same output", () => {
+      const weights1 = calculateDominanceWeights(testMc);
+      const weights2 = calculateDominanceWeights(testMc);
+
+      expect(weights1).toEqual(weights2);
+    });
+
+    it("emphasizes dominance with higher exponent", () => {
+      const lowExponentConfig: DominanceWeightConfig = {
+        ...DEFAULT_DOMINANCE_CONFIG,
+        exponent: 1.0,
+      };
+      const highExponentConfig: DominanceWeightConfig = {
+        ...DEFAULT_DOMINANCE_CONFIG,
+        exponent: 5.0,
+      };
+
+      const lowWeights = calculateDominanceWeights(testMc, lowExponentConfig);
+      const highWeights = calculateDominanceWeights(testMc, highExponentConfig);
+
+      // Higher exponent should create larger difference between max and min
+      const lowDiff = lowWeights.MACHINE - lowWeights.ICE;
+      const highDiff = highWeights.MACHINE - highWeights.ICE;
+
+      expect(highDiff).toBeGreaterThan(lowDiff);
+    });
+  });
 
   describe("toWeightedFragments", () => {
     it("converts MC map to weighted fragments sorted by weight", () => {
