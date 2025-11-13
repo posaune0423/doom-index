@@ -32,7 +32,7 @@ export const FloatingWhitepaper: React.FC<FloatingWhitepaperProps> = ({
     }
   }, [position]);
 
-  useFrame(() => {
+  useFrame(({ invalidate }) => {
     if (!groupRef.current) {
       return;
     }
@@ -46,6 +46,9 @@ export const FloatingWhitepaper: React.FC<FloatingWhitepaperProps> = ({
     // Camera is at [0, 0.8, 0.8] looking at [0, 0.8, 4.0]
     // Paper is at [0, 0.8, 4.0], so it needs to face back towards camera
     groupRef.current.rotation.set(0, Math.PI, 0);
+
+    // Invalidate for demand mode
+    invalidate();
   });
 
   // Calculate paper size based on viewport: height 90% of viewport, width for comfortable reading

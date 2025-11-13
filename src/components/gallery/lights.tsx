@@ -31,7 +31,7 @@ export const Lights: React.FC = () => {
     return geometry;
   }, []);
 
-  useFrame(() => {
+  useFrame(({ invalidate }) => {
     if (!targetRef.current) {
       return;
     }
@@ -51,6 +51,9 @@ export const Lights: React.FC = () => {
     if (floorGlowRef.current) {
       floorGlowRef.current.position.set(targetPosition.current.x, 0.004, targetPosition.current.z - 0.16);
     }
+
+    // Invalidate for demand mode
+    invalidate();
   });
 
   return (

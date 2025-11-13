@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { ACESFilmicToneMapping, PCFSoftShadowMap } from "three";
 import { OrbitControls, Grid, Stats } from "@react-three/drei";
@@ -65,6 +65,7 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
   return (
     <>
       <Canvas
+        frameloop="demand"
         shadows
         dpr={[1, 1.5]}
         camera={{
@@ -132,7 +133,9 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
         )}
         <GalleryRoom />
 
-        <FramedPainting thumbnailUrl={thumbnailUrl} />
+        <Suspense fallback={null}>
+          <FramedPainting thumbnailUrl={thumbnailUrl} />
+        </Suspense>
         {showDashboard && <RealtimeDashboard isHelpOpen={isDashboardHelpOpen} onHelpToggle={setIsDashboardHelpOpen} />}
         {isDevelopment && <Stats />}
       </Canvas>

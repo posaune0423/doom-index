@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState, Suspense } from "react";
 import type { PropsWithChildren } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -8,6 +8,7 @@ import { ACESFilmicToneMapping, PCFSoftShadowMap } from "three";
 import { GalleryRoom } from "../gallery/gallery-room";
 import { Lights } from "../gallery/lights";
 import { logger } from "@/utils/logger";
+import { useMobile } from "@/hooks/use-mobile";
 import { FloatingWhitepaper } from "./floating-whitepaper";
 import WhitepaperViewer from "./whitepaper-viewer";
 
@@ -16,18 +17,9 @@ interface AboutSceneProps extends PropsWithChildren {
 }
 
 export const AboutScene: React.FC<AboutSceneProps> = ({ children, initialCameraPosition = [0, 0.8, 0.8] }) => {
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useMobile();
   const [webglError, setWebglError] = useState(false);
   const [isPaperHovered, setIsPaperHovered] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768 || "ontouchstart" in window);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   const handleWebGLError = (error: unknown) => {
     logger.error("about-scene.webgl.failed", { error });
@@ -59,6 +51,7 @@ export const AboutScene: React.FC<AboutSceneProps> = ({ children, initialCameraP
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
       <Canvas
+        frameloop="demand"
         shadows
         dpr={[1, 1.5]}
         camera={{
@@ -100,9 +93,11 @@ export const AboutScene: React.FC<AboutSceneProps> = ({ children, initialCameraP
         />
         <Lights />
         <GalleryRoom />
-        <FloatingWhitepaper isMobile={isMobile} onHoverChange={setIsPaperHovered}>
-          {children}
-        </FloatingWhitepaper>
+        <Suspense fallback={null}>
+          <FloatingWhitepaper isMobile={isMobile} onHoverChange={setIsPaperHovered}>
+            {children}
+          </FloatingWhitepaper>
+        </Suspense>
       </Canvas>
     </div>
   );
