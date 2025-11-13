@@ -1,9 +1,8 @@
 export const metadata = {
-  title: "DOOM INDEX: A Market-Driven Generative Art System",
+  title: "DOOM INDEX — A Market-Driven Generative Art Protocol",
   authors: ["DOOM INDEX Research Team"],
   date: "November 13, 2025",
-  institution: "Solana Blockchain Network",
-  version: "v1.0",
+  version: "v1.1",
 };
 
 <div className="paper-header">
@@ -19,425 +18,467 @@ export const metadata = {
       </span>
     ))}
   </div>
-  <div className="paper-institution">{metadata.institution}</div>
   <div className="paper-epigraph">
-    <em>"Every buy paints the apocalypse. Every sell erases hope."</em>
+    <em>"A decentralized archive of financial emotions."</em>
   </div>
 </div>
 
-<div className="abstract-section">
+---
 
-## Abstract
+## 1. Motivation
 
-DOOM INDEX is an experimental art project that transforms on-chain market activity into continuously evolving generative artwork. By monitoring the market capitalization of eight thematic tokens on the Solana blockchain, the system generates unique AI-driven paintings every minute, creating a real-time visual representation of humanity's collective anxieties and aspirations as expressed through financial speculation.
+Markets are emotional. Behind every price movement lives fear, hope, greed, anxiety, euphoria—the full spectrum of human feeling compressed into numbers.
 
-This whitepaper presents the conceptual framework, symbolic architecture, and generative methodology underlying DOOM INDEX, exploring the intersection of blockchain economics, artificial intelligence, and contemporary art practice.
+But emotions are invisible. Charts show lines, not sentiment. Prices capture transactions, not psychology.
+
+**What if we could make financial emotions visible?**
+
+Generative AI can translate data into forms humans perceive. Language becomes images. Numbers become narratives. So why not translate market psychology into paintings?
+
+Solana's memecoin markets—where rationality and irrationality collide at light speed—are the purest expression of collective financial emotion. Every buy is hope. Every sell is doubt. Every spike is euphoria, every crash is panic.
+
+DOOM INDEX was born to **archive these emotions**—transforming raw market data into paintings that capture what the numbers alone never could: how the market _felt_ at that exact moment.
+
+---
+
+## 2. What DOOM INDEX Is
+
+**DOOM INDEX is a decentralized archive of financial emotions—an onchain system where AI generates one painting every minute, translating the collective psychology of 8 pump.fun tokens into visual art.**
+
+These 8 tokens—launched on pump.fun, the Solana memecoin launchpad—represent fundamental human concerns: environmental collapse, existential threats, technological dominance, fear, and hope. As their market caps shift, the emotions they represent flow into the painting. When FEAR rises, shadows deepen. When HOPE climbs, light breaks through. When NUKE spikes, the canvas erupts in radioactive glow.
+
+**Market emotion becomes visual emotion.** Every painting is a timestamp of collective psychology—a permanent record of how thousands of traders felt at that exact moment in time.
+
+### v1 → v2 Evolution
+
+**v1 (Current)** is the proof of concept—fixed 8 tokens, fully automated generation, one new painting every minute. It demonstrates that markets can become art.
+
+**v2 (Coming Soon)** introduces community governance and historical archiving. Through **DOOM DAO**, $DOOM holders will vote on which tokens matter. **Season NFTs** will preserve historically significant moments chosen by the community. A **Dynamic Index** will allow adding trending tokens and removing outdated ones.
+
+---
+
+## 3. How the Painting Is Generated
+
+Every minute, the system captures the 8 tokens' market caps and translates them into a painting through a weighted composition algorithm:
+
+```mermaid
+graph TD
+    A[Fetch Market Caps] --> B[Calculate Relative Dominance]
+    B --> C[Apply Non-Linear Weighting]
+    C --> D[Build Weighted Prompt]
+    D --> E[AI Generation Medieval Style]
+    E --> F[Store & Display]
+```
+
+### The Algorithm
+
+**1. Relative Dominance Calculation**
+The token with the highest market cap becomes the reference point. All other tokens are weighted relative to this dominant token—not to fixed thresholds. This means the painting always reflects _which forces are stronger than others_ at that moment.
+
+**2. Non-Linear Emphasis**
+A power function amplifies differences. If FEAR is 2x higher than HOPE, the visual weight difference becomes even more pronounced. This makes dominant emotions clearly visible in the composition.
+
+**3. Weighted Medieval Allegory**
+Each token maps to a visual motif—"dense toxic smog" (CO2), "radiant golden light" (HOPE), "nuclear flash" (NUKE). The AI receives a weighted prompt in the format `(element:weight)`, creating a medieval allegorical oil painting where visual presence directly reflects market dominance.
+
+**4. Deterministic Output**
+Same market state = same painting. The system uses a hash of the rounded market caps to skip regeneration when nothing significant has changed, ensuring consistency.
+
+### AI as Interpreter
+
+> _"There are no facts, only interpretations."_
+> — Friedrich Nietzsche
+
+DOOM INDEX doesn't show you "the truth" about markets—it shows you an **interpretation**.
+
+Charts display numbers. Prices show transactions. These are valuable, but they're one way to see markets. DOOM INDEX offers another: **emotional translation**. The AI doesn't analyze or predict. It translates market psychology into visual language, the same way a poet translates feelings into words.
+
+When AI interprets market data through symbolic mapping (CO2 → fog, HOPE → light), you experience the market from a different angle—not as data, but as **atmosphere**.
+
+---
+
+## 4. The Eight Tokens
+
+These 8 tokens form the "world model" of DOOM INDEX. When their market cap rises, specific elements in the painting strengthen. When they fall, those elements weaken.
+
+<div style={{ marginTop: '2rem' }}>
+
+<div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
+
+<div
+  style={{
+    display: "flex",
+    gap: "1.2rem",
+    alignItems: "flex-start",
+    padding: "1.2rem",
+    background: "rgba(255,255,255,0.02)",
+    borderRadius: "8px",
+    border: "1px solid rgba(255,255,255,0.05)",
+  }}
+>
+  <img
+    src="/token-images/co2.webp"
+    alt="CO2"
+    style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
+  />
+  <div style={{ flex: 1 }}>
+    <h4 style={{ marginTop: 0, marginBottom: "0.4rem" }}>
+      CO2 — Atmospheric Collapse{" "}
+      <a
+        href="https://pump.fun/coin/DffFSfxSBKFp93geSsV1LvNMVyqURKVTiGkhA1DsMgcU"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ fontSize: "0.75rem", color: "#60a5fa", textDecoration: "none" }}
+      >
+        [pump.fun]
+      </a>
+    </h4>
+    <p style={{ fontSize: "0.85rem", opacity: 0.7, margin: "0.5rem 0" }}>
+      mc↑ → Sky gets hazy / Fog thickens / Vision closes
+    </p>
+    <ul style={{ fontSize: "0.8rem", opacity: 0.6, marginTop: "0.5rem", paddingLeft: "1.2rem" }}>
+      <li>Fog density</li>
+      <li>Industrial smog</li>
+      <li>Overall desaturation</li>
+    </ul>
+  </div>
+</div>
+
+<div
+  style={{
+    display: "flex",
+    gap: "1.2rem",
+    alignItems: "flex-start",
+    padding: "1.2rem",
+    background: "rgba(255,255,255,0.02)",
+    borderRadius: "8px",
+    border: "1px solid rgba(255,255,255,0.05)",
+  }}
+>
+  <img
+    src="/token-images/ice.webp"
+    alt="ICE"
+    style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
+  />
+  <div style={{ flex: 1 }}>
+    <h4 style={{ marginTop: 0, marginBottom: "0.4rem" }}>
+      ICE — Cryosphere Melt{" "}
+      <a
+        href="https://pump.fun/coin/4p1eFvFLxKPYgYrrv69UD4ATZBAceaTBasoxTXW8tiYa"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ fontSize: "0.75rem", color: "#60a5fa", textDecoration: "none" }}
+      >
+        [pump.fun]
+      </a>
+    </h4>
+    <p style={{ fontSize: "0.85rem", opacity: 0.7, margin: "0.5rem 0" }}>
+      mc↑ → Glaciers and reflective light strengthen / Blue tone increases
+    </p>
+    <ul style={{ fontSize: "0.8rem", opacity: 0.6, marginTop: "0.5rem", paddingLeft: "1.2rem" }}>
+      <li>Cool color highlights</li>
+      <li>Crystal shimmer</li>
+    </ul>
+  </div>
+</div>
+
+<div
+  style={{
+    display: "flex",
+    gap: "1.2rem",
+    alignItems: "flex-start",
+    padding: "1.2rem",
+    background: "rgba(255,255,255,0.02)",
+    borderRadius: "8px",
+    border: "1px solid rgba(255,255,255,0.05)",
+  }}
+>
+  <img
+    src="/token-images/forest.webp"
+    alt="FOREST"
+    style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
+  />
+  <div style={{ flex: 1 }}>
+    <h4 style={{ marginTop: 0, marginBottom: "0.4rem" }}>
+      FOREST — Biosphere{" "}
+      <a
+        href="https://pump.fun/coin/CNAuVvVhi9pRsku7Z4UyMJUnd7ystQmR22e7N1WVtgCu"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ fontSize: "0.75rem", color: "#60a5fa", textDecoration: "none" }}
+      >
+        [pump.fun]
+      </a>
+    </h4>
+    <p style={{ fontSize: "0.85rem", opacity: 0.7, margin: "0.5rem 0" }}>mc↑ → Vegetation and life patterns expand</p>
+    <ul style={{ fontSize: "0.8rem", opacity: 0.6, marginTop: "0.5rem", paddingLeft: "1.2rem" }}>
+      <li>Green density</li>
+      <li>Organic textures</li>
+    </ul>
+  </div>
+</div>
+
+<div
+  style={{
+    display: "flex",
+    gap: "1.2rem",
+    alignItems: "flex-start",
+    padding: "1.2rem",
+    background: "rgba(255,255,255,0.02)",
+    borderRadius: "8px",
+    border: "1px solid rgba(255,255,255,0.05)",
+  }}
+>
+  <img
+    src="/token-images/nuke.webp"
+    alt="NUKE"
+    style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
+  />
+  <div style={{ flex: 1 }}>
+    <h4 style={{ marginTop: 0, marginBottom: "0.4rem" }}>
+      NUKE — Nuclear Risk{" "}
+      <a
+        href="https://pump.fun/coin/4VSuakewWBzHQLc3Z4Lpf2sCVLEDx6B1cXhMeWyT8Uap"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ fontSize: "0.75rem", color: "#60a5fa", textDecoration: "none" }}
+      >
+        [pump.fun]
+      </a>
+    </h4>
+    <p style={{ fontSize: "0.85rem", opacity: 0.7, margin: "0.5rem 0" }}>
+      mc↑ → Radioactive glow / Flash light / Debris particles increase
+    </p>
+    <ul style={{ fontSize: "0.8rem", opacity: 0.6, marginTop: "0.5rem", paddingLeft: "1.2rem" }}>
+      <li>Yellow-orange explosion light</li>
+      <li>Dust noise</li>
+    </ul>
+  </div>
+</div>
+
+<div
+  style={{
+    display: "flex",
+    gap: "1.2rem",
+    alignItems: "flex-start",
+    padding: "1.2rem",
+    background: "rgba(255,255,255,0.02)",
+    borderRadius: "8px",
+    border: "1px solid rgba(255,255,255,0.05)",
+  }}
+>
+  <img
+    src="/token-images/machine.webp"
+    alt="MACHINE"
+    style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
+  />
+  <div style={{ flex: 1 }}>
+    <h4 style={{ marginTop: 0, marginBottom: "0.4rem" }}>
+      MACHINE — Artificial Dominance{" "}
+      <a
+        href="https://pump.fun/coin/FNWaFsgdCu4jFhvsF4cwYFfz2sYcM9U1gvXbBLPvdA5Z"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ fontSize: "0.75rem", color: "#60a5fa", textDecoration: "none" }}
+      >
+        [pump.fun]
+      </a>
+    </h4>
+    <p style={{ fontSize: "0.85rem", opacity: 0.7, margin: "0.5rem 0" }}>
+      mc↑ → Mechanical structures and metal patterns invade
+    </p>
+    <ul style={{ fontSize: "0.8rem", opacity: 0.6, marginTop: "0.5rem", paddingLeft: "1.2rem" }}>
+      <li>Grid patterns</li>
+      <li>Metallic ratio</li>
+    </ul>
+  </div>
+</div>
+
+<div
+  style={{
+    display: "flex",
+    gap: "1.2rem",
+    alignItems: "flex-start",
+    padding: "1.2rem",
+    background: "rgba(255,255,255,0.02)",
+    borderRadius: "8px",
+    border: "1px solid rgba(255,255,255,0.05)",
+  }}
+>
+  <img
+    src="/token-images/pandemic.webp"
+    alt="PANDEMIC"
+    style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
+  />
+  <div style={{ flex: 1 }}>
+    <h4 style={{ marginTop: 0, marginBottom: "0.4rem" }}>
+      PANDEMIC — Biological Spread{" "}
+      <a
+        href="https://pump.fun/coin/2WLeZcqGnSu69oqHxLtpubbHP9RWwagjM7ny4RBF7sbe"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ fontSize: "0.75rem", color: "#60a5fa", textDecoration: "none" }}
+      >
+        [pump.fun]
+      </a>
+    </h4>
+    <p style={{ fontSize: "0.85rem", opacity: 0.7, margin: "0.5rem 0" }}>
+      mc↑ → Organic diffusion / Spores / Glowing particles increase
+    </p>
+    <ul style={{ fontSize: "0.8rem", opacity: 0.6, marginTop: "0.5rem", paddingLeft: "1.2rem" }}>
+      <li>Fractal expansion</li>
+      <li>Bioluminescence</li>
+    </ul>
+  </div>
+</div>
+
+<div
+  style={{
+    display: "flex",
+    gap: "1.2rem",
+    alignItems: "flex-start",
+    padding: "1.2rem",
+    background: "rgba(255,255,255,0.02)",
+    borderRadius: "8px",
+    border: "1px solid rgba(255,255,255,0.05)",
+  }}
+>
+  <img
+    src="/token-images/fear.webp"
+    alt="FEAR"
+    style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
+  />
+  <div style={{ flex: 1 }}>
+    <h4 style={{ marginTop: 0, marginBottom: "0.4rem" }}>
+      FEAR — Collective Dread{" "}
+      <a
+        href="https://pump.fun/coin/CmfGCD7MFFL8P5TdeCoPMc9jbu18T88XEesv7ZzR7FGX"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ fontSize: "0.75rem", color: "#60a5fa", textDecoration: "none" }}
+      >
+        [pump.fun]
+      </a>
+    </h4>
+    <p style={{ fontSize: "0.85rem", opacity: 0.7, margin: "0.5rem 0" }}>
+      mc↑ → Shadows deepen / Red highlights intensify
+    </p>
+    <ul style={{ fontSize: "0.8rem", opacity: 0.6, marginTop: "0.5rem", paddingLeft: "1.2rem" }}>
+      <li>Darkness density</li>
+      <li>Surveillance atmosphere</li>
+    </ul>
+  </div>
+</div>
+
+<div
+  style={{
+    display: "flex",
+    gap: "1.2rem",
+    alignItems: "flex-start",
+    padding: "1.2rem",
+    background: "rgba(255,255,255,0.02)",
+    borderRadius: "8px",
+    border: "1px solid rgba(255,255,255,0.05)",
+  }}
+>
+  <img
+    src="/token-images/hope.webp"
+    alt="HOPE"
+    style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
+  />
+  <div style={{ flex: 1 }}>
+    <h4 style={{ marginTop: 0, marginBottom: "0.4rem" }}>
+      HOPE — Human Resilience{" "}
+      <a
+        href="https://pump.fun/coin/9CQSWPqP69h1gVnqpQVYsQBByzP9Tyo6dgNqcjyCmW18"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ fontSize: "0.75rem", color: "#60a5fa", textDecoration: "none" }}
+      >
+        [pump.fun]
+      </a>
+    </h4>
+    <p style={{ fontSize: "0.85rem", opacity: 0.7, margin: "0.5rem 0" }}>mc↑ → Light pours in / Warm colors spread</p>
+    <ul style={{ fontSize: "0.8rem", opacity: 0.6, marginTop: "0.5rem", paddingLeft: "1.2rem" }}>
+      <li>Luminosity</li>
+      <li>Warm color palette</li>
+    </ul>
+  </div>
+</div>
+
+</div>
 
 </div>
 
 ---
 
-## 1. Project Genesis: What is DOOM INDEX?
+## 5. Future Plans: v2 & Beyond
 
-DOOM INDEX operates at the convergence of three domains:
+### Where We're Going
 
-1. **Financial Markets**: Real-time market capitalization data from Solana-based tokens
-2. **Artificial Intelligence**: Generative image synthesis driven by market-derived parameters
-3. **Digital Art**: A virtual gallery space presenting the continuously evolving artwork
+v1 proves the concept: markets can be art. But there's room to evolve. The current fixed tokens could adapt to new memes or cultural shifts. Right now, every painting disappears after a minute—no memory exists. And the community has no voice in what matters.
 
-### 1.1 Core Concept
+**v2 will introduce DOOM DAO and Season NFTs** to address these limitations.
 
-The project reframes cryptocurrency trading as an unintentional form of collective artistic expression. Each transaction—whether driven by speculation, fear, or hope—becomes a brushstroke in an ever-changing canvas depicting "the state of the world."
+### DOOM DAO: Community Governance (Coming Soon)
 
-The system monitors eight thematic tokens, each representing a different dimension of contemporary global concerns:
+Holding **$DOOM** tokens grants governance power over three key areas:
 
-- **Environmental collapse** (CO2, ICE, FOREST)
-- **Existential threats** (NUKE, PANDEMIC)
-- **Technological dominance** (MACHINE)
-- **Psychological states** (FEAR, HOPE)
+**1. Index Composition** — Decide which tokens influence the painting. Should a trending meme token be added? Is it time to remove something outdated? The community votes.
 
-As traders buy and sell these tokens, their collective market activity directly influences the visual characteristics of the generated artwork, creating a feedback loop between economic behavior and aesthetic output.
+**2. Historical Curation** — Every season (~30-90 days), the DAO votes on which moments to preserve. "Best DOOM" captures the most apocalyptic painting, "Least DOOM" the most hopeful. These will be immortalized as NFTs.
 
-### 1.2 The Gallery Experience
+**3. Model Evolution** — Should DOOM INDEX train a custom art style? Which visual direction should it explore? The community decides the aesthetic future.
 
-The artwork is presented in a minimalist virtual museum environment—a dark gallery space with a single baroque gold frame containing the current generated painting. This deliberate aesthetic choice emphasizes:
+### Season NFTs: Preserving History
 
-- **Singularity**: One painting at a time, demanding focused attention
-- **Temporality**: The artwork changes every minute, never to be seen again
-- **Ritual**: The viewing experience becomes a meditation on impermanence
+Right now, every painting lasts 1 minute and vanishes. But some moments are too important to lose—**market crashes** that send FEAR to the moon, **unexpected HOPE surges** during chaos, **meme events** that make MACHINE or PANDEMIC explode.
 
----
+The system will log every painting with full market data. The community nominates historically significant moments, and the DAO votes on which matter most. Winners get regenerated in ultra-high resolution (4K-8K) and minted as permanent NFTs on Solana.
 
-## 2. The Painting: Semantic Architecture
+Each NFT becomes a **timestamp of collective psychology**—proof that on a specific date, the market felt a certain way and looked like this.
 
-Each generated painting is not merely decorative—it functions as a **data visualization**, a **cultural artifact**, and a **speculative fiction** simultaneously.
+### Why $DOOM Will Have Value
 
-### 2.1 Visual Semantics
+**$DOOM = The right to curate internet capital market history**
 
-The AI-generated paintings synthesize multiple visual motifs corresponding to the eight tracked indicators:
+The value of DOOM INDEX doesn't come from hype—it comes from a structural intersection of **AI × Art × Collective Memory**.
 
-| Visual Element            | Meaning                          | Market Driver       |
-| ------------------------- | -------------------------------- | ------------------- |
-| **Atmospheric density**   | Environmental degradation        | CO2 market cap      |
-| **Glacial luminosity**    | Climate tipping points           | ICE market cap      |
-| **Organic patterns**      | Biodiversity and natural systems | FOREST market cap   |
-| **Radiative glow**        | Nuclear threat and energy        | NUKE market cap     |
-| **Mechanical structures** | AI/automation dominance          | MACHINE market cap  |
-| **Fractal diffusion**     | Pandemic spread patterns         | PANDEMIC market cap |
-| **Shadow depth**          | Collective anxiety               | FEAR market cap     |
-| **Light intensity**       | Resilience and optimism          | HOPE market cap     |
+Here's why this matters:
 
-### 2.2 Compositional Logic
+#### 1. AI Evolution = Permanent Art Value Increase
 
-The painting's composition follows a multi-layered synthesis model:
+DOOM INDEX paintings aren't static—they evolve with AI technology itself. Better AI models produce better paintings from the same market data. Prompt algorithms continuously improve. Season NFTs become **cultural snapshots of AI capability at that moment**.
 
-```mermaid
-graph TD
-    A[Market Data] --> B[Normalization Layer]
-    B --> C[Semantic Mapping]
-    C --> D[Visual Parameters]
-    D --> E[Prompt Construction]
-    E --> F[AI Generation]
-    F --> G[Gallery Display]
+**As AI gets better, the archive gets more valuable.** Since NFTs don't degrade, this "continuous quality increase" creates long-term value for the entire archive.
 
-    C --> C1[Color Temperature]
-    C --> C2[Contrast Ratio]
-    C --> C3[Texture Density]
-    C --> C4[Light Distribution]
-```
+#### 2. Community as Market Memory Editors
 
-Each token's market cap is normalized to a 0-1 scale, then mapped to specific visual parameters that influence the AI's generative process. The resulting image is deterministic—given the same market state, the system produces the same painting.
+One painting every minute equals infinite generation, but only a few moments get preserved. $DOOM holders decide which moments to immortalize as NFTs, which tokens should enter the index, which direction the visual style evolves, and ultimately what history gets written.
+
+**$DOOM = Editorial rights to market history.** As Season NFTs accumulate, these editorial rights gain compounding cultural and economic value.
+
+#### 3. The Art × Meme Crossroads
+
+DOOM INDEX isn't just art. It's not just memecoin. It's where **market volatility becomes emotion**. Meme market volatility translates into painting emotion. CO2, NUKE, and HOPE function as culturally intuitive symbols. Every screenshot shared on X creates self-propagating presence.
+
+In crypto culture, strong context creates art value while strong memes create crypto vあalue. DOOM INDEX has both. It sits at the rare intersection where **cultural capital meets meme capital**.
 
 ---
 
-## 3. The Eight Tokens: Symbolic Framework
-
-Each token represents a dimension of contemporary existential concern, functioning as both financial instrument and cultural signifier.
-
-### 3.1 Environmental Indicators
-
-#### CO2 — Atmospheric Degradation
-
-![CO2 Token](/token-images/co2.webp)
-
-**Symbolic Meaning**: Carbon emissions, climate change, industrial pollution
-
-**Visual Influence**:
-
-- Higher market cap → Increased fog density
-- Desaturated color palette
-- Hazy atmospheric effects
-- Reduced visibility and clarity
-
-**Market Interpretation**: Rising CO2 market cap suggests increased attention to climate concerns, manifesting as visual opacity and environmental distress in the painting.
+**In Summary**, $DOOM value is built on three reinforcing layers: AI progress lifts archive quality forever, DAO curation creates scarcity from infinity, and the Art × Meme position captures maximum cultural attention. This isn't just price—it's the infrastructure for **markets recording their own history**.
 
 ---
 
-#### ICE — Cryospheric Collapse
+## 6. Credits
 
-![ICE Token](/token-images/ice.webp)
-
-**Symbolic Meaning**: Polar ice melt, glacial retreat, temperature extremes
-
-**Visual Influence**:
-
-- Higher market cap → Enhanced reflectivity
-- Cool color temperature (blue shift)
-- Crystalline structures
-- Luminous highlights
-
-**Market Interpretation**: ICE market activity reflects concern for polar regions and climate tipping points, translated into cold, reflective visual elements.
+- **Developed on**: [Solana](https://solana.com) blockchain
+- **Powered by**: [pump.fun](https://pump.fun) & [dev.fun](https://dev.fun)
+- **Built for**: The meme economy, the art world, and everyone in between
 
 ---
 
-#### FOREST — Biosphere Vitality
-
-![FOREST Token](/token-images/forest.webp)
-
-**Symbolic Meaning**: Deforestation, biodiversity, natural ecosystems
-
-**Visual Influence**:
-
-- Higher market cap → Increased vegetation density
-- Organic, fractal patterns
-- Green color saturation
-- Natural texture complexity
-
-**Market Interpretation**: FOREST trading volume indicates attention to ecological preservation, manifesting as organic growth patterns and natural complexity in the artwork.
-
----
-
-### 3.2 Existential Threat Indicators
-
-#### NUKE — Nuclear Catastrophe
-
-![NUKE Token](/token-images/nuke.webp)
-
-**Symbolic Meaning**: Nuclear weapons, radiation, warfare, energy risk
-
-**Visual Influence**:
-
-- Higher market cap → Radiative glow effects
-- Particle noise and debris
-- Flash highlights
-- Ash-like textures
-
-**Market Interpretation**: NUKE market activity reflects geopolitical tensions and nuclear anxiety, creating explosive visual elements and destructive aesthetics.
-
----
-
-#### PANDEMIC — Biological Threat
-
-![PANDEMIC Token](/token-images/pandemic.webp)
-
-**Symbolic Meaning**: Disease spread, public health crises, biological vulnerability
-
-**Visual Influence**:
-
-- Higher market cap → Fractal diffusion patterns
-- Organic spread effects
-- Bioluminescent elements
-- Cellular structures
-
-**Market Interpretation**: PANDEMIC trading suggests heightened awareness of biological threats, visualized through spreading, organic patterns reminiscent of viral propagation.
-
----
-
-### 3.3 Technological Indicator
-
-#### MACHINE — Artificial Dominance
-
-![MACHINE Token](/token-images/machine.webp)
-
-**Symbolic Meaning**: AI advancement, automation, technological control
-
-**Visual Influence**:
-
-- Higher market cap → Mechanical pattern density
-- Geometric structures
-- Metallic textures
-- Grid-like organization
-
-**Market Interpretation**: MACHINE market cap reflects concerns about AI and automation, manifesting as rigid, mechanical visual elements that suggest technological dominance over organic forms.
-
----
-
-### 3.4 Psychological Indicators
-
-#### FEAR — Collective Anxiety
-
-![FEAR Token](/token-images/fear.webp)
-
-**Symbolic Meaning**: Societal dread, surveillance, oppression
-
-**Visual Influence**:
-
-- Higher market cap → Deeper shadows
-- High contrast (chiaroscuro)
-- Dark color dominance
-- Red accent highlights
-
-**Market Interpretation**: FEAR trading volume indicates collective anxiety levels, creating oppressive shadows and dramatic contrasts in the visual composition.
-
----
-
-#### HOPE — Resilient Optimism
-
-![HOPE Token](/token-images/hope.webp)
-
-**Symbolic Meaning**: Human resilience, optimism, regeneration
-
-**Visual Influence**:
-
-- Higher market cap → Increased light intensity
-- Warm color temperature
-- Luminous elements
-- Transparent, ethereal qualities
-
-**Market Interpretation**: HOPE market activity suggests collective optimism, manifesting as light sources, warm colors, and uplifting visual elements that counterbalance darker themes.
-
----
-
-### 3.5 Token Interaction Dynamics
-
-The eight tokens do not operate in isolation—their combined market states create emergent visual narratives:
-
-- **Environmental Collapse Scenario**: High CO2 + Low ICE + Low FOREST → Toxic, barren landscape
-- **Technological Dystopia**: High MACHINE + High FEAR + Low HOPE → Mechanical, oppressive atmosphere
-- **Pandemic Crisis**: High PANDEMIC + High FEAR + Low HOPE → Organic threat with dark undertones
-- **Balanced Tension**: Moderate values across all tokens → Complex, nuanced composition
-- **Hope Dominance**: High HOPE + Low FEAR → Luminous, optimistic despite other threats
-
----
-
-## 4. AI Generation Flow: From Market to Canvas
-
-The transformation of market data into visual art follows a rigorous, deterministic pipeline:
-
-### 4.1 Data Acquisition
-
-```mermaid
-graph LR
-    A[Solana Blockchain] --> B[Dexscreener API]
-    B --> C[Market Cap Data]
-    C --> D[8 Token Values]
-    D --> E[Timestamp]
-```
-
-Every minute, the system queries current market capitalization for all eight tokens via the Dexscreener API, which aggregates real-time trading data from Solana DEXs.
-
-### 4.2 Normalization & Hashing
-
-```mermaid
-graph TD
-    A[Raw Market Caps] --> B[Normalization 0-1]
-    B --> C[Quantization]
-    C --> D[Hash Generation]
-    D --> E{Compare with Previous Hash}
-    E -->|Different| F[Proceed to Generation]
-    E -->|Identical| G[Skip Generation]
-```
-
-**Normalization**: Each token's market cap is scaled to a 0-1 range based on historical min/max values.
-
-**Quantization**: Values are rounded to reduce noise and prevent unnecessary regeneration from minor fluctuations.
-
-**Hash Comparison**: The system generates a cryptographic hash of the current market state. If identical to the previous state, generation is skipped to conserve resources.
-
-### 4.3 Prompt Construction
-
-The normalized values are embedded into a structured natural language prompt:
-
-```
-Square surreal oil painting in a baroque gold frame, dark museum lighting.
-Depict the current state of the world based on on-chain market data:
-
-CO2({mc_CO2}), ICE({mc_ICE}), FOREST({mc_FOREST}), NUKE({mc_NUKE}),
-MACHINE({mc_MACHINE}), PANDEMIC({mc_PANDEMIC}), FEAR({mc_FEAR}), HOPE({mc_HOPE})
-
-Blend visual motifs:
-- Toxic atmospheric haze (CO2)
-- Glacial reflective surfaces (ICE)
-- Dense organic vegetation (FOREST)
-- Nuclear ash and radiation glow (NUKE)
-- Mechanical lattice structures (MACHINE)
-- Pandemic fractal diffusion (PANDEMIC)
-- Oppressive shadows (FEAR)
-- Resilient light sources (HOPE)
-
-Visual parameters:
-- Intensity = {entropy_value}
-- Contrast = {contrast_ratio}
-- Color Temperature = {temp_value}
-
-Style: Hyperrealistic oil painting texture, cinematic chiaroscuro lighting,
-baroque composition, 1:1 aspect ratio, 1024x1024px.
-
-Seed: {deterministic_seed}
-```
-
-The deterministic seed ensures reproducibility—the same market state always produces the same painting.
-
-### 4.4 AI Generation
-
-The prompt is sent to an AI image generation service (Runware, OpenAI DALL-E, or fallback mock generator), which synthesizes the visual elements according to the specified parameters.
-
-### 4.5 Storage & Display
-
-```mermaid
-graph LR
-    A[Generated Image] --> B[Cloudflare R2 Storage]
-    B --> C[Gallery Display]
-    B --> D[OG Image Cache]
-    D --> E[Social Sharing]
-```
-
-The generated image is stored in Cloudflare R2 with metadata (timestamp, market caps, hash), then displayed in the 3D gallery environment.
-
----
-
-## 5. Pump.fun: The Economic Substrate
-
-### 5.1 What is Pump.fun?
-
-[Pump.fun](https://pump.fun) is a Solana-based platform for launching and trading meme tokens with minimal friction. It enables anyone to create a token and establish a liquidity pool instantly, democratizing token creation.
-
-### 5.2 DOOM INDEX Token Economics
-
-Each of the eight DOOM INDEX tokens is launched on Pump.fun, creating a decentralized market where:
-
-1. **Anyone can trade**: No permission required
-2. **Price discovery is continuous**: Market cap fluctuates based on buy/sell pressure
-3. **Trading fees generate revenue**: 0.05% fee on each transaction
-
-### 5.3 The Art-Economy Feedback Loop
-
-```mermaid
-graph TD
-    A[User sees painting] --> B[Curious about token meaning]
-    B --> C[Visits Pump.fun]
-    C --> D[Buys token]
-    D --> E[Market cap increases]
-    E --> F[Painting changes]
-    F --> A
-```
-
-This creates a unique dynamic where:
-
-- **Art influences economics**: Compelling visuals drive interest in tokens
-- **Economics influences art**: Trading activity directly modifies the artwork
-- **Speculation becomes creation**: Every trade is an artistic contribution
-
-### 5.4 Revenue Model
-
-The project sustains itself through trading fees:
-
-- **Fee per trade**: 0.05% (0.0005)
-- **Average trade size**: $1,000
-- **Fee per $1,000 trade**: $0.50
-
-With minimal trading activity (0.02 trades/minute across all 8 tokens), monthly revenue exceeds operational costs, making the project economically sustainable while remaining artistically focused.
-
----
-
-## 6. Philosophical Implications
-
-### 6.1 Market as Medium
-
-DOOM INDEX challenges traditional notions of artistic authorship. Who is the artist?
-
-- The AI that generates the image?
-- The traders whose actions determine the parameters?
-- The system designer who created the mapping?
-- The collective unconscious expressed through market behavior?
-
-### 6.2 Impermanence and Value
-
-Each painting exists for exactly one minute before being replaced. This radical impermanence questions:
-
-- What gives art value—permanence or experience?
-- Can a continuously changing artwork be "collected"?
-- How do we preserve ephemeral digital art?
-
-### 6.3 Speculation as Expression
-
-By treating trading as artistic input, DOOM INDEX reframes financial speculation as a form of collective expression—perhaps the most honest representation of contemporary values.
-
----
-
-## 7. Conclusion
-
-DOOM INDEX is an experiment in **market-driven aesthetics**, **algorithmic curation**, and **collective unconscious visualization**. It transforms the abstract, often invisible world of cryptocurrency trading into a tangible, visual experience that reflects humanity's deepest concerns and aspirations.
-
-As markets fluctuate, so does our collective portrait of the apocalypse—sometimes dark and oppressive, sometimes luminous with hope. The painting never stops changing, because the world never stops changing.
-
-> _"The market is chaos. But chaos, visualized and aestheticized, becomes poetry."_
-
----
-
-## References
-
-- Solana Blockchain: https://solana.com
-- Pump.fun Platform: https://pump.fun
-- Dexscreener API: https://dexscreener.com
-- Project Repository: https://github.com/posaune0423/doom-index
+<div style={{ textAlign: "center", marginTop: "4rem", opacity: 0.6, fontSize: "0.9rem" }}>
+  <p>DOOM INDEX v1.1 — November 2025</p>
+  <p>A decentralized archive of financial emotions.</p>
+</div>
