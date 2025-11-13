@@ -6,7 +6,7 @@ import type { NextPage } from "next";
 
 export const metadata: Metadata = {
   title: "About - DOOM INDEX",
-  description: "DOOM INDEX プロジェクトについて",
+  description: "Learn about the DOOM INDEX project and its mission to visualize global indicators through generative art",
 };
 
 const AboutPage: NextPage = async () => {
@@ -19,7 +19,7 @@ const AboutPage: NextPage = async () => {
         </AboutScene>
       </main>
       {/* リーダーモード用の通常HTML（視覚的には非表示） */}
-      <article className="sr-only" aria-label="DOOM INDEX プロジェクトについて">
+      <article className="sr-only" aria-label="About DOOM INDEX">
         <MDXArticle />
       </article>
     </>
