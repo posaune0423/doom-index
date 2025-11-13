@@ -14,7 +14,7 @@ export const TopBarProgress: FC = () => {
   const [displaySecond, setDisplaySecond] = useState<number>(0);
   const progressBarRef = useRef<HTMLDivElement | null>(null);
 
-  const { triggerHaptic } = useHaptic();
+  const { triggerHaptic } = useHaptic(5);
   const [playChime] = useSound("/clock-chime.mp3", { interrupt: true });
   const refetchGlobalState = useGlobalStateRefetch();
 

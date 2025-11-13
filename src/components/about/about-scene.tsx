@@ -8,7 +8,7 @@ import { ACESFilmicToneMapping, PCFSoftShadowMap } from "three";
 import { GalleryRoom } from "../gallery/gallery-room";
 import { Lights } from "../gallery/lights";
 import { logger } from "@/utils/logger";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIOS, useMobile } from "@/hooks/use-mobile";
 import { FloatingWhitepaper } from "./floating-whitepaper";
 import WhitepaperViewer from "./whitepaper-viewer";
 
@@ -17,7 +17,9 @@ interface AboutSceneProps extends PropsWithChildren {
 }
 
 export const AboutScene: React.FC<AboutSceneProps> = ({ children, initialCameraPosition = [0, 0.8, 0.8] }) => {
+  const HEADER_HEIGHT = 56;
   const isMobile = useMobile();
+  const isIOS = useIOS();
   const [webglError, setWebglError] = useState(false);
   const [isPaperHovered, setIsPaperHovered] = useState(false);
 
@@ -77,6 +79,7 @@ export const AboutScene: React.FC<AboutSceneProps> = ({ children, initialCameraP
         onError={handleWebGLError}
       >
         <OrbitControls
+          enabled={!isIOS}
           enableDamping
           dampingFactor={0.05}
           enablePan={false}
@@ -93,12 +96,57 @@ export const AboutScene: React.FC<AboutSceneProps> = ({ children, initialCameraP
         />
         <Lights />
         <GalleryRoom />
-        <Suspense fallback={null}>
-          <FloatingWhitepaper isMobile={isMobile} onHoverChange={setIsPaperHovered}>
-            {children}
-          </FloatingWhitepaper>
-        </Suspense>
+        {!isIOS && (
+          <Suspense fallback={null}>
+            <FloatingWhitepaper isMobile={isMobile} onHoverChange={setIsPaperHovered}>
+              {children}
+            </FloatingWhitepaper>
+          </Suspense>
+        )}
       </Canvas>
+
+      {/* iOS: DOM fallback (drei#720 Html transform issue workaround) */}
+      {isIOS && (
+        <div
+          style={{
+            position: "fixed",
+            top: `${HEADER_HEIGHT}px`,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "16px",
+            boxSizing: "border-box",
+            pointerEvents: "none",
+          }}
+        >
+          <div
+            style={{
+              width: "min(700px, 100%)",
+              height: "100%",
+              background: "#ffffff",
+              overflowY: "auto",
+              overflowX: "hidden",
+              pointerEvents: "auto",
+              boxShadow:
+                "0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.15), 0 16px 48px rgba(0, 0, 0, 0.2)",
+              borderRadius: "2px",
+              border: "1px solid rgba(200, 200, 200, 0.3)",
+              WebkitOverflowScrolling: "touch",
+              touchAction: "pan-y",
+              overscrollBehavior: "contain",
+              WebkitTouchCallout: "none",
+              WebkitUserSelect: "text",
+            }}
+          >
+            <div style={{ padding: "1px 0" }}>
+              <WhitepaperViewer>{children}</WhitepaperViewer>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

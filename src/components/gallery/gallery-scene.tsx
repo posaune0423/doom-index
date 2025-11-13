@@ -34,7 +34,7 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
   const setIsDashboardHelpOpen = externalOnHelpToggle ?? setInternalIsHelpOpen;
   const [currentCameraPreset, setCurrentCameraPreset] = useState<"dashboard" | "painting">(initialCameraPreset);
 
-  const { triggerHaptic } = useHaptic();
+  const { triggerHaptic } = useHaptic(5);
 
   const { data: globalState } = useGlobalState();
   const thumbnailUrl = globalState?.imageUrl ?? DEFAULT_THUMBNAIL;
