@@ -19,7 +19,7 @@ const AboutPage: NextPage = async () => {
         </AboutScene>
       </main>
       {/* リーダーモード用の通常HTML（視覚的には非表示） */}
-      <article className="sr-only" aria-label="DOOM INDEX プロジェクトについて">
+      <article className="sr-only" aria-label="About DOOM INDEX">
         <MDXArticle />
       </article>
     </>
