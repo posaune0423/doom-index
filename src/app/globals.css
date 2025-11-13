@@ -32,3 +32,35 @@ body {
     Cinzel Decorative,
     serif;
 }
+
+/* Screen reader only - visually hidden but accessible to assistive technologies */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* リーダーモードや印刷時は通常のHTMLを表示 */
+@media print, (prefers-reduced-motion: reduce) {
+  .sr-only {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 2rem;
+    margin: 0 auto;
+    max-width: 800px;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  main[style*="overflow: hidden"] {
+    display: none;
+  }
+}

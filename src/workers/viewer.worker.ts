@@ -1,5 +1,3 @@
-export default null; // TypeScript warning
-
 import { isBotUserAgent } from "@/utils/user-agent";
 
 const endpoint = "/api/viewer";
@@ -55,3 +53,7 @@ if (isValidBrowserRequest()) {
     clearInterval(timer);
   });
 }
+
+const viewerWorker: null = null;
+
+export default viewerWorker;

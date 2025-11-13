@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
-import { ACESFilmicToneMapping, DoubleSide, PCFSoftShadowMap } from "three";
+import { ACESFilmicToneMapping, PCFSoftShadowMap } from "three";
 import { OrbitControls, Grid, Stats } from "@react-three/drei";
 import { Lights } from "./lights";
 import { FramedPainting } from "./framed-painting";
 import { CameraRig } from "./camera-rig";
+import { GalleryRoom } from "./gallery-room";
 import { RealtimeDashboard } from "../ui/realtime-dashboard";
 import { useHaptic } from "use-haptic";
 import { useGlobalState } from "@/hooks/use-global-state";
@@ -129,32 +130,7 @@ export const GalleryScene: React.FC<GallerySceneProps> = ({
             />
           </>
         )}
-        <group>
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]} receiveShadow>
-            <planeGeometry args={[10, 10]} />
-            <meshStandardMaterial color="#4b4d68" roughness={0.48} metalness={0.26} side={DoubleSide} />
-          </mesh>
-          <mesh position={[0, 1.65, 5]} rotation={[0, Math.PI, 0]} receiveShadow>
-            <planeGeometry args={[10, 4.5]} />
-            <meshStandardMaterial color="#6c6d89" roughness={0.84} metalness={0.11} side={DoubleSide} />
-          </mesh>
-          <mesh rotation={[0, -Math.PI / 2, 0]} position={[5, 1.65, 0]} receiveShadow>
-            <planeGeometry args={[10, 4.5]} />
-            <meshStandardMaterial color="#686a86" roughness={0.84} metalness={0.11} side={DoubleSide} />
-          </mesh>
-          <mesh rotation={[0, Math.PI / 2, 0]} position={[-5, 1.65, 0]} receiveShadow>
-            <planeGeometry args={[10, 4.5]} />
-            <meshStandardMaterial color="#686a86" roughness={0.84} metalness={0.11} side={DoubleSide} />
-          </mesh>
-          <mesh position={[0, 1.65, -5]} receiveShadow>
-            <planeGeometry args={[10, 4.5]} />
-            <meshStandardMaterial color="#686a86" roughness={0.84} metalness={0.11} side={DoubleSide} />
-          </mesh>
-          <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 3.3, 0]} receiveShadow>
-            <planeGeometry args={[7, 7]} />
-            <meshStandardMaterial color="#2d2d40" roughness={0.72} metalness={0.14} side={DoubleSide} />
-          </mesh>
-        </group>
+        <GalleryRoom />
 
         <FramedPainting thumbnailUrl={thumbnailUrl} />
         {showDashboard && <RealtimeDashboard isHelpOpen={isDashboardHelpOpen} onHelpToggle={setIsDashboardHelpOpen} />}

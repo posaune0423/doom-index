@@ -17,7 +17,7 @@ describe("OGP Image Generation (Integration Tests)", () => {
   const createMockFetcher = (shouldSucceed: boolean, imageData?: string): Fetcher => {
     return {
       fetch: mock(async (input: RequestInfo | URL) => {
-        const url = typeof input === "string" ? input : input instanceof URL ? input.pathname : input.url;
+        const _url = typeof input === "string" ? input : input instanceof URL ? input.pathname : input.url;
         if (shouldSucceed) {
           const buffer = new TextEncoder().encode(imageData || "mock image data").buffer;
           return new Response(buffer, {
@@ -27,6 +27,9 @@ describe("OGP Image Generation (Integration Tests)", () => {
         }
         return new Response(null, { status: 404 });
       }) as unknown as typeof fetch,
+      connect: mock(() => {
+        throw new Error("connect is not implemented in tests");
+      }) as unknown as Fetcher["connect"],
     } as Fetcher;
   };
 
@@ -191,6 +194,9 @@ describe("OGP Image Generation (Integration Tests)", () => {
             headers: { "Content-Type": "image/webp" },
           });
         }) as unknown as typeof fetch,
+        connect: mock(() => {
+          throw new Error("connect is not implemented in tests");
+        }) as unknown as Fetcher["connect"],
       } as Fetcher;
 
       const dataUrl = await getPlaceholderDataUrl(mockFetcher);

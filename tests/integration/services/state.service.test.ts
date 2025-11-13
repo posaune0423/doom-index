@@ -5,7 +5,7 @@ import type { GlobalState, TokenState, RevenueReport } from "@/types/domain";
 
 describe("StateService (5.1)", () => {
   it("reads and writes global state JSON", async () => {
-    const { bucket, store } = createMemoryR2Client();
+    const { bucket } = createMemoryR2Client();
     const service = createStateService({ r2Bucket: bucket });
     const initial = await service.readGlobalState();
     expect(initial.isOk()).toBe(true);

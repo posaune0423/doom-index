@@ -100,6 +100,7 @@ export const TopBarProgress: FC = () => {
 
   return (
     <div className="flex flex-col items-center gap-2">
+      <span className="text-white/60 text-sm font-cinzel-decorative tracking-wide">Next Generation</span>
       <span className="font-mono text-sm text-white/70 tabular-nums">{secondsLabel} s</span>
       <div className="h-1 w-32 overflow-hidden rounded-full bg-white/20">
         <div ref={progressBarRef} className="h-full bg-white" />
