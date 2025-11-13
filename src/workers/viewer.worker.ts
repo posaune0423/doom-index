@@ -1,5 +1,3 @@
-export default null; // TypeScript warning
-
 import { isBotUserAgent } from "@/utils/user-agent";
 
 const endpoint = "/api/viewer";

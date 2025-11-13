@@ -1,4 +1,6 @@
 /// <reference lib="dom" />
+/// <reference types="@testing-library/jest-dom" />
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * Unit Tests for OGP Image Generation Components

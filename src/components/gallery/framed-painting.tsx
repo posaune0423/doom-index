@@ -244,7 +244,9 @@ const PaintingContent: React.FC<PaintingContentProps> = ({
     };
   }, [currentTexture, texture]);
 
-  useFrame((_, delta) => {
+  useFrame(({ invalidate }, delta) => {
+    let needsInvalidate = false;
+
     // Handle pulse animation
     if (isPulseActiveRef.current && pulseGroupRef.current) {
       pulseElapsedRef.current += delta;
@@ -267,6 +269,8 @@ const PaintingContent: React.FC<PaintingContentProps> = ({
         pulseGroupRef.current.visible = false;
         isPulseActiveRef.current = false;
       }
+
+      needsInvalidate = true;
     }
 
     // Handle texture transition animation
@@ -309,6 +313,13 @@ const PaintingContent: React.FC<PaintingContentProps> = ({
           finalMaterial.transparent = false;
         }
       }
+
+      needsInvalidate = true;
+    }
+
+    // Invalidate for demand mode only when animation is active
+    if (needsInvalidate) {
+      invalidate();
     }
   });
 

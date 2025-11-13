@@ -42,7 +42,9 @@ export const CameraRig: React.FC<CameraRigProps> = ({ preset = "painting" }) => 
   const transitionStart = useRef(0);
   const isTransitioning = useRef(false);
 
-  useFrame(({ clock }) => {
+  const currentLookAtRef = useRef(new Vector3());
+
+  useFrame(({ clock, invalidate }) => {
     // Check if preset has changed and start transition
     if (preset !== currentPreset.current && !isTransitioning.current) {
       currentPreset.current = preset;
@@ -52,6 +54,7 @@ export const CameraRig: React.FC<CameraRigProps> = ({ preset = "painting" }) => 
       targetPosition.current.set(...PRESETS[preset].position);
       targetLookAt.current.set(...PRESETS[preset].lookAt);
       transitionStart.current = clock.getElapsedTime() * 1000;
+      invalidate();
     }
 
     // Perform transition
@@ -63,13 +66,15 @@ export const CameraRig: React.FC<CameraRigProps> = ({ preset = "painting" }) => 
       // Interpolate position
       camera.position.lerpVectors(startPosition.current, targetPosition.current, easedProgress);
 
-      // Interpolate lookAt
-      const currentLookAt = new Vector3().lerpVectors(startLookAt.current, targetLookAt.current, easedProgress);
-      camera.lookAt(currentLookAt);
+      // Interpolate lookAt (reuse ref to avoid new allocation)
+      currentLookAtRef.current.lerpVectors(startLookAt.current, targetLookAt.current, easedProgress);
+      camera.lookAt(currentLookAtRef.current);
 
       if (progress >= 1) {
         isTransitioning.current = false;
       }
+
+      invalidate();
     }
   });
 
