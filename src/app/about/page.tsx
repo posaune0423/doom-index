@@ -6,7 +6,8 @@ import type { NextPage } from "next";
 
 export const metadata: Metadata = {
   title: "About - DOOM INDEX",
-  description: "Learn about the DOOM INDEX project and its mission to visualize global indicators through generative art",
+  description:
+    "Learn about the DOOM INDEX project and its mission to visualize global indicators through generative art",
 };
 
 const AboutPage: NextPage = async () => {
