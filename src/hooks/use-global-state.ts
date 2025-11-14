@@ -1,8 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
+import { z } from "zod";
 import type { GlobalState } from "@/types/domain";
 import { logger } from "@/utils/logger";
 import { useTRPC } from "@/lib/trpc/client";
+
+/**
+ * Zod schema for GlobalState validation
+ * Mirrors the GlobalState type definition
+ */
+const globalStateSchema = z.object({
+  prevHash: z.string().nullable(),
+  lastTs: z.string().nullable(),
+  imageUrl: z.string().nullable().optional(),
+  revenueMinute: z.string().nullable().optional(),
+});
 
 export const useGlobalState = () => {
   const previousImageUrlRef = useRef<string | null | undefined>(undefined);
@@ -18,7 +30,18 @@ export const useGlobalState = () => {
       },
     ),
     select: (data: unknown): GlobalState | null => {
-      return (data ?? null) as GlobalState | null;
+      if (data === null || data === undefined) {
+        return null;
+      }
+      const parseResult = globalStateSchema.safeParse(data);
+      if (parseResult.success) {
+        return parseResult.data;
+      }
+      logger.error("use-global-state.validationFailed", {
+        error: parseResult.error.message,
+        data,
+      });
+      return null;
     },
   });
 

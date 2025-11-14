@@ -91,6 +91,7 @@ export function createGenerationService({
     if (prevHash && prevHash === hash) {
       log.info("generation.skip", { hash, prevHash });
       log.info("DISABLE HASH CHECK RIGHT NOW", { hash, prevHash });
+      // NOTE: DISABLE HASH CHECK FOR A WHILE
       // return ok({
       //   status: "skipped" as const,
       //   hash,
