@@ -1,6 +1,6 @@
 /// <reference lib="dom" />
 
-import { describe, it, expect, mock, beforeEach } from "bun:test";
+import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
 import { render } from "@testing-library/react";
 import WhitepaperViewer from "@/components/about/whitepaper-viewer";
 
@@ -11,6 +11,10 @@ beforeEach(() => {
       container: "container",
     },
   }));
+});
+
+afterEach(() => {
+  mock.restore();
 });
 
 describe("WhitepaperViewer", () => {

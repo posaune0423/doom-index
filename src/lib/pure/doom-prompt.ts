@@ -98,7 +98,8 @@ const TOKEN_PHRASE: Record<TokenTicker, string> = {
   FOREST:
     "endless expanses of vibrant green canopies, intertwined roots reclaiming abandoned structures, and wildlife thriving in the untouched wilderness",
   NUKE: "ashen wastelands under nuclear fallout, with radioactive winds sweeping through ruins and a towering mushroom cloud dominating the sky",
-  MACHINE: "cold robotic automatons marching in formation, towering AI surveillance systems with glowing electronic eyes, automated factories with mechanical arms and assembly lines, cybernetic beings fused with technology, dystopian machinery controlling and monitoring everything",
+  MACHINE:
+    "cold robotic automatons marching in formation, towering AI surveillance systems with glowing electronic eyes, automated factories with mechanical arms and assembly lines, cybernetic beings fused with technology, dystopian machinery controlling and monitoring everything",
   PANDEMIC:
     "masked figures wandering through unsanitary streets filled with viral clouds, bio-contaminants, and microscopic pathogens dominating the air",
   FEAR: "oppressive darkness with many red eyes",

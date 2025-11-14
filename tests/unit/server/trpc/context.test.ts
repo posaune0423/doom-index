@@ -1,6 +1,15 @@
 import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
-import { createContext } from "@/server/trpc/context";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
+
+// Mock must be set up before importing createContext so getCloudflareContext
+// is replaced when the module is evaluated
+mock.module("@opennextjs/cloudflare", () => ({
+  getCloudflareContext: () => {
+    throw new Error("Cloudflare context not available");
+  },
+}));
+
+import { createContext } from "@/server/trpc/context";
 
 describe("Context Creator", () => {
   beforeEach(() => {
@@ -38,13 +47,6 @@ describe("Context Creator", () => {
       resHeaders: new Headers(),
       info: {} as unknown as FetchCreateContextFnOptions["info"],
     };
-
-    // getCloudflareContextがエラーを投げる場合をシミュレート
-    mock.module("@opennextjs/cloudflare", () => ({
-      getCloudflareContext: () => {
-        throw new Error("Cloudflare context not available");
-      },
-    }));
 
     const context = await createContext(opts);
 
