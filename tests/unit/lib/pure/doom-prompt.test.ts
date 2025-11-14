@@ -124,15 +124,17 @@ describe("Doom Prompt Generation", () => {
 
       // Check dominance-based weighting
       // MACHINE has highest MC (1,450,000), so it should have highest weight (close to MAX_WEIGHT = 2.0)
-      const machineFragment = fragments.find(f => f.text.includes("machine"));
-      expect(machineFragment?.weight).toBeGreaterThan(1.5); // Should be close to 2.0
+      const machineFragment = fragments.find(f => f.text.includes("megastructures"));
+      expect(machineFragment).toBeDefined();
+      expect(machineFragment!.weight).toBeGreaterThan(1.5); // Should be close to 2.0
 
       // ICE has lowest MC (200,000), so it should have lowest weight (close to MIN_WEIGHT = 0.1)
       const iceFragment = fragments.find(f => f.text.includes("glaciers"));
-      expect(iceFragment?.weight).toBeLessThan(0.5); // Should be close to 0.1
+      expect(iceFragment).toBeDefined();
+      expect(iceFragment!.weight).toBeLessThan(0.5); // Should be close to 0.1
 
       // Verify dominance: MACHINE weight should be significantly higher than ICE
-      expect(machineFragment?.weight).toBeGreaterThan((iceFragment?.weight || 0) * 3);
+      expect(machineFragment!.weight).toBeGreaterThan(iceFragment!.weight * 3);
     });
 
     it("handles zero values with minimum weight", () => {
@@ -176,14 +178,14 @@ describe("Doom Prompt Generation", () => {
     it("includes all token elements in the prompt", () => {
       const { prompt } = buildSDXLPrompt(testMc);
 
-      expect(prompt).toContain("smog");
-      expect(prompt).toContain("glaciers");
-      expect(prompt).toContain("forests");
-      expect(prompt).toContain("nuclear");
-      expect(prompt).toContain("machine");
-      expect(prompt).toContain("spores");
-      expect(prompt).toContain("darkness");
-      expect(prompt).toContain("light");
+      expect(prompt).toContain("smog"); // CO2
+      expect(prompt).toContain("glaciers"); // ICE
+      expect(prompt).toContain("canopies"); // FOREST phrase contains "canopies"
+      expect(prompt).toContain("nuclear"); // NUKE
+      expect(prompt).toContain("megastructures"); // MACHINE phrase contains "megastructures"
+      expect(prompt).toContain("viral"); // PANDEMIC phrase contains "viral"
+      expect(prompt).toContain("darkness"); // FEAR
+      expect(prompt).toContain("light"); // HOPE
       expect(prompt).toContain("medieval figures");
     });
   });

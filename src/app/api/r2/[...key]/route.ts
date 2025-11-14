@@ -1,39 +1,41 @@
+import { resolveR2BucketAsync } from "@/lib/r2";
 import { NextResponse } from "next/server";
-import { resolveR2Bucket } from "@/lib/r2";
 
-type RouteContext = {
-  params: Promise<{
-    key: string[];
-  }>;
-};
+/**
+ * Direct R2 object access endpoint for binary data (images, etc.)
+ * This endpoint is used by browsers directly via <img src> tags,
+ * so it cannot use tRPC streaming which requires tRPC client.
+ *
+ * URL format: /api/r2/key1/key2/file.webp
+ */
+export async function GET(_req: Request, { params }: { params: Promise<{ key: string[] }> }): Promise<Response> {
+  const { key } = await params;
 
-const joinKey = (segments: string[]): string =>
-  segments
+  if (!key || key.length === 0) {
+    return NextResponse.json({ error: "Invalid R2 object key" }, { status: 400 });
+  }
+
+  // Join key segments and normalize
+  const objectKey = key
     .map(segment => segment.replace(/^\/*|\/*$/g, ""))
     .filter(Boolean)
     .join("/");
 
-export async function GET(_request: Request, { params }: RouteContext) {
-  const { key } = await params;
-  if (!Array.isArray(key) || key.length === 0) {
-    return NextResponse.json({ error: "Missing R2 object key" }, { status: 400 });
-  }
-
-  const objectKey = joinKey(key);
   if (!objectKey) {
     return NextResponse.json({ error: "Invalid R2 object key" }, { status: 400 });
   }
 
-  const bucketResult = resolveR2Bucket();
+  const bucketResult = await resolveR2BucketAsync();
+
   if (bucketResult.isErr()) {
-    return NextResponse.json({ error: bucketResult.error }, { status: 500 });
+    return NextResponse.json({ error: bucketResult.error.message }, { status: 500 });
   }
 
   const bucket = bucketResult.value;
   const object = await bucket.get(objectKey);
 
   if (!object) {
-    return new NextResponse(null, { status: 404 });
+    return NextResponse.json({ error: "Object not found" }, { status: 404 });
   }
 
   const headers = new Headers();

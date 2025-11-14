@@ -90,11 +90,12 @@ export function createGenerationService({
 
     if (prevHash && prevHash === hash) {
       log.info("generation.skip", { hash, prevHash });
-      return ok({
-        status: "skipped" as const,
-        hash,
-        roundedMap,
-      });
+      log.info("DISABLE HASH CHECK RIGHT NOW", { hash, prevHash });
+      // return ok({
+      //   status: "skipped" as const,
+      //   hash,
+      //   roundedMap,
+      // });
     }
 
     log.info("generation.trigger", { hash, prevHash });

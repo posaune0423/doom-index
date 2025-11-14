@@ -12,6 +12,7 @@ import { RealtimeDashboard } from "../ui/realtime-dashboard";
 import { useHaptic } from "use-haptic";
 import { useGlobalState } from "@/hooks/use-global-state";
 import { logger } from "@/utils/logger";
+import { env } from "@/env";
 
 interface GallerySceneProps {
   cameraPreset?: "dashboard" | "painting";
@@ -20,7 +21,7 @@ interface GallerySceneProps {
   onHelpToggle?: (open: boolean) => void;
 }
 
-const isDevelopment = process.env.NODE_ENV === "development";
+const isDevelopment = env.NODE_ENV === "development";
 const DEFAULT_THUMBNAIL = "/placeholder-painting.webp";
 
 export const GalleryScene: React.FC<GallerySceneProps> = ({
