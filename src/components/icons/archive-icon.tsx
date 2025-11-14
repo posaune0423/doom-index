@@ -14,10 +14,9 @@ export const ArchiveIcon = (props: SVGProps<SVGSVGElement>) => {
       strokeLinejoin="round"
       {...props}
     >
-      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-      <path d="M7 8h10" />
-      <path d="M7 12h10" />
-      <path d="M7 16h10" />
+      <path d="M3 3v5h5" />
+      <path d="M3.05 13a9 9 0 1 0 2.1-8.6L8 8" />
+      <path d="M12 7v5l4 2" />
     </svg>
   );
 };

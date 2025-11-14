@@ -23,27 +23,14 @@ export const ArchiveItemComponent: React.FC<ArchiveItemProps> = ({ item }) => {
   };
 
   const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    const img = event.currentTarget;
-    const errorDetails = {
+    logger.error("archive.item.image.failed", {
       itemId: item.id,
       imageUrl: item.imageUrl,
-      naturalWidth: img.naturalWidth,
-      naturalHeight: img.naturalHeight,
-      currentSrc: img.currentSrc,
-      src: img.src,
-      complete: img.complete,
-    };
-    logger.debug("archive.item.image.failed", errorDetails);
+      error: event,
+    });
     setIsLoading(false);
     setHasError(true);
   };
-
-  logger.debug("archive.item.render", {
-    itemId: item.id,
-    imageUrl: item.imageUrl,
-    isLoading,
-    hasError,
-  });
 
   return (
     <div className="group relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-white/10 bg-black/20 transition-all hover:border-white/20">

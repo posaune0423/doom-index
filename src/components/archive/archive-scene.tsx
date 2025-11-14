@@ -14,7 +14,7 @@ interface ArchiveSceneProps {
   totalItems: number;
 }
 
-const isDevelopment = env.NEXT_PUBLIC_NODE_ENV === "development";
+const isDevelopment = env.NODE_ENV === "development";
 
 export const ArchiveScene: React.FC<ArchiveSceneProps> = ({ children, totalItems }) => {
   return (

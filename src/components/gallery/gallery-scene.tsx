@@ -21,7 +21,7 @@ interface GallerySceneProps {
   onHelpToggle?: (open: boolean) => void;
 }
 
-const isDevelopment = env.NEXT_PUBLIC_NODE_ENV === "development";
+const isDevelopment = env.NODE_ENV === "development";
 const DEFAULT_THUMBNAIL = "/placeholder-painting.webp";
 const HEADER_HEIGHT = 56;
 
