@@ -53,11 +53,7 @@ function filterWebpObjects(objects: R2Object[]): R2Object[] {
 /**
  * Apply limit and build pagination response
  */
-function buildPaginatedResponse(
-  items: ArchiveItem[],
-  limit: number,
-  r2Truncated: boolean,
-): ArchiveListResponse {
+function buildPaginatedResponse(items: ArchiveItem[], limit: number, r2Truncated: boolean): ArchiveListResponse {
   const limitedItems = items.slice(0, limit);
   const hasMore = items.length > limit || r2Truncated;
   const cursor = hasMore && limitedItems.length > 0 ? limitedItems[limitedItems.length - 1]?.id : undefined;
@@ -261,7 +257,9 @@ export function createArchiveListService({ r2Bucket }: ArchiveListServiceDeps = 
 
         if (options.cursor && !cursorFound) {
           // Determine if cursor is within this batch
-          const cursorIndex = webpObjects.findIndex(obj => extractIdFromFilename(obj.key.split("/").pop() || "") === options.cursor);
+          const cursorIndex = webpObjects.findIndex(
+            obj => extractIdFromFilename(obj.key.split("/").pop() || "") === options.cursor,
+          );
           if (cursorIndex >= 0) {
             cursorFound = true;
             collectedWebpObjects.push(...webpObjects.slice(cursorIndex + 1));
