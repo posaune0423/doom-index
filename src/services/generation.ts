@@ -88,16 +88,16 @@ export function createGenerationService({
     const prevState = globalStateResult.value;
     const prevHash = prevState?.prevHash ?? null;
 
-    log.info("DISABLING SKIP RIGHT NOW EVEN IF THE HASH IS THE SAME", { hash, prevHash });
-
-    // if (prevHash && prevHash === hash) {
-    //   log.info("generation.skip", { hash, prevHash });
-    //   return ok({
-    //     status: "skipped" as const,
-    //     hash,
-    //     roundedMap,
-    //   });
-    // }
+    if (prevHash && prevHash === hash) {
+      log.info("generation.skip", { hash, prevHash });
+      log.info("DISABLE HASH CHECK RIGHT NOW", { hash, prevHash });
+      // NOTE: DISABLE HASH CHECK FOR A WHILE
+      // return ok({
+      //   status: "skipped" as const,
+      //   hash,
+      //   roundedMap,
+      // });
+    }
 
     log.info("generation.trigger", { hash, prevHash });
 

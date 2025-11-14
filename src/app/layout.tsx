@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/app/providers";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { getBaseUrl } from "@/utils/url";
+import { ViewTransition } from "react";
 
 const cinzelDecorative = Cinzel_Decorative({
   variable: "--font-cinzel-decorative",
@@ -24,12 +25,12 @@ const cinzelDecorative = Cinzel_Decorative({
  */
 export async function generateMetadata(): Promise<Metadata> {
   const description =
-    "8 global indicators ($CO2, $ICE, $FOREST, $NUKE, $MACHINE, $PANDEMIC, $FEAR, $HOPE) visualized as generative art in real-time.";
-  const title = "DOOM INDEX - Every buy paints the apocalypse.";
+    "A decentralized archive of financial emotions. AI generates one painting every minute, translating the collective psychology of 8 pump.fun tokens ($CO2, $ICE, $FOREST, $NUKE, $MACHINE, $PANDEMIC, $FEAR, $HOPE) into visual art.";
+  const title = "DOOM INDEX";
   // Use environment-based URL
   const metadataBase = new URL(getBaseUrl());
   const ogImageUrl = new URL("/opengraph-image", metadataBase).toString();
-  const ogImageAlt = "DOOM INDEX - Current Every buy paints the apocalypse.";
+  const ogImageAlt = "DOOM INDEX - A decentralized archive of financial emotions.";
 
   return {
     metadataBase,
@@ -88,14 +89,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" style={{ margin: 0, padding: 0, width: "100%", height: "100%" }}>
-      <body
-        className={`${cinzelDecorative.variable} antialiased`}
-        style={{ margin: 0, padding: 0, width: "100%", height: "100%", overflow: "hidden" }}
-      >
-        <Providers>{children}</Providers>
-      </body>
-      <GoogleAnalytics gaId="G-RMLTMSSJ8T" />
-    </html>
+    <ViewTransition>
+      <html lang="en" style={{ margin: 0, padding: 0, width: "100%", height: "100%" }}>
+        <body
+          className={`${cinzelDecorative.variable} antialiased`}
+          style={{ margin: 0, padding: 0, width: "100%", height: "100%", overflow: "hidden" }}
+        >
+          <Providers>{children}</Providers>
+        </body>
+        <GoogleAnalytics gaId="G-RMLTMSSJ8T" />
+      </html>
+    </ViewTransition>
   );
 }

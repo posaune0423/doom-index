@@ -1,4 +1,6 @@
 /// <reference lib="dom" />
+/// <reference types="@testing-library/jest-dom" />
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * Unit Tests for OGP Image Generation Components
@@ -201,7 +203,7 @@ describe("OGP Image Generation Components", () => {
     });
 
     test("should have correct alt text", () => {
-      expect(alt).toBe("DOOM INDEX - Current world state visualization");
+      expect(alt).toBe("DOOM INDEX - A decentralized archive of financial emotions.");
     });
   });
 

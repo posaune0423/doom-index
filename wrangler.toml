@@ -45,13 +45,14 @@ id = "8c588d03a8ab4cd19e0c458dcabf1bec"
 directory = "./.open-next/assets"
 binding = "ASSETS"
 
+
 [[services]]
 binding = "WORKER_SELF_REFERENCE"
 service = "doom-index"
 
 [vars]
 NODE_ENV = "production"
-LOG_LEVEL = "INFO"
+LOG_LEVEL = "DEBUG"
 NEXTJS_ENV = "production"
 # NEXT_PUBLIC_BASE_URL = "https://doomindex.fun"
 IMAGE_MODEL = "runware:100@1"

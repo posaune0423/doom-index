@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState, type FC, type SVGProps } from
 import { PumpFunIcon } from "@/components/icons/pump-fun-icon";
 import { GitHubIcon } from "@/components/icons/github-icon";
 import { XIcon } from "@/components/icons/x-icon";
+import { InfoIcon } from "@/components/icons/info-icon";
 import { GITHUB_URL, X_URL } from "@/constants";
 
 import { TopBarProgress } from "./top-bar-progress";
@@ -18,9 +19,9 @@ type NavLinkConfig = {
 
 const NAV_LINKS: NavLinkConfig[] = [
   {
-    href: GITHUB_URL,
-    label: "GitHub",
-    Icon: GitHubIcon,
+    href: "https://pump.fun/coin/AJfn5M1bWeSsZDq89TgkKXm7AdtAQCsqzkYRxYGoqdev",
+    label: "Pump.fun",
+    Icon: PumpFunIcon,
   },
   {
     href: X_URL,
@@ -28,9 +29,9 @@ const NAV_LINKS: NavLinkConfig[] = [
     Icon: XIcon,
   },
   {
-    href: "https://pump.fun/coin/AJfn5M1bWeSsZDq89TgkKXm7AdtAQCsqzkYRxYGoqdev",
-    label: "Pump.fun",
-    Icon: PumpFunIcon,
+    href: GITHUB_URL,
+    label: "GitHub",
+    Icon: GitHubIcon,
   },
 ];
 
@@ -38,10 +39,10 @@ const DESKTOP_LINK_CLASS =
   "group flex h-7 w-7 items-center justify-center rounded-full border border-white/15 text-white/70 transition-colors hover:border-white/40 hover:text-white";
 
 interface TopBarProps {
-  onAboutClick?: () => void;
+  showProgress?: boolean;
 }
 
-export const TopBar: FC<TopBarProps> = ({ onAboutClick }) => {
+export const TopBar: FC<TopBarProps> = ({ showProgress = true }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -99,7 +100,12 @@ export const TopBar: FC<TopBarProps> = ({ onAboutClick }) => {
       <div className="container mx-auto md:px-4 px-2 py-3">
         <div className="grid w-full gap-y-3 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-x-6 md:gap-y-0">
           <div className="flex items-center justify-between md:justify-start">
-            <h1 className="text-white text-xl font-bold font-cinzel-decorative">DOOM INDEX</h1>
+            <Link
+              href="/"
+              className="text-white text-xl font-bold font-cinzel-decorative hover:text-white/80 transition-colors"
+            >
+              DOOM INDEX
+            </Link>
             <div ref={menuContainerRef} className="relative flex items-center md:hidden">
               <button
                 type="button"
@@ -124,22 +130,17 @@ export const TopBar: FC<TopBarProps> = ({ onAboutClick }) => {
               {isMenuOpen ? (
                 <nav
                   id="topbar-mobile-menu"
-                  aria-label="External Links"
+                  aria-label="Navigation Links"
                   className="absolute right-0 top-full mt-3 flex w-48 flex-col gap-1 rounded-xl border border-white/20 bg-white/10 p-3 text-white/90 shadow-2xl backdrop-blur-lg"
                 >
-                  {onAboutClick && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onAboutClick();
-                        closeMenu();
-                      }}
-                      className="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-white/10 hover:text-white text-left w-full"
-                    >
-                      <span className="h-4 w-4 flex items-center justify-center text-base">ℹ</span>
-                      <span>About</span>
-                    </button>
-                  )}
+                  <Link
+                    href="/about"
+                    className="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-white/10 hover:text-white"
+                    onClick={closeMenu}
+                  >
+                    <InfoIcon className="h-4 w-4" />
+                    <span>About</span>
+                  </Link>
                   {NAV_LINKS.map(({ href, label, Icon }) => (
                     <Link
                       key={href}
@@ -157,14 +158,14 @@ export const TopBar: FC<TopBarProps> = ({ onAboutClick }) => {
               ) : null}
             </div>
           </div>
-          <div className="flex flex-col items-center gap-2 md:justify-self-center">
-            <span className="text-white/60 text-sm font-cinzel-decorative tracking-wide">Next Generation</span>
-            <div className="flex flex-col items-center">
-              <TopBarProgress />
-            </div>
+          <div className="flex flex-col items-center md:justify-self-center">
+            {showProgress ? <TopBarProgress /> : null}
           </div>
           <div className="hidden justify-end md:flex">
-            <nav className="flex items-center justify-end gap-3" aria-label="External Links">
+            <nav className="flex items-center justify-end gap-3" aria-label="Navigation Links">
+              <Link href="/about" aria-label="About" className={DESKTOP_LINK_CLASS}>
+                <InfoIcon className="h-3 w-3" />
+              </Link>
               {NAV_LINKS.map(({ href, label, Icon }) => (
                 <Link
                   key={href}
