@@ -59,7 +59,6 @@ export interface StateService {
   writeGlobalState(state: GlobalState): Promise<Result<void, AppError>>;
   readTokenState(ticker: TokenTicker): Promise<Result<TokenState | null, AppError>>;
   writeTokenStates(states: TokenState[]): Promise<Result<void, AppError>>;
-  storeImage(key: string, buf: ArrayBuffer): Promise<Result<string, AppError>>;
   writeRevenue(report: RevenueReport, minuteIso: string): Promise<Result<void, AppError>>;
   readRevenue(minuteIso: string): Promise<Result<RevenueReport | null, AppError>>;
 }

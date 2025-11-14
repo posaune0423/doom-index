@@ -201,6 +201,74 @@ export function createMemoryR2Client(): {
         },
       };
     },
+
+    async list(options?: R2ListOptions): Promise<R2Objects> {
+      const prefix = options?.prefix ?? "";
+      const limit = options?.limit ?? 1000;
+      const startAfter = options?.startAfter;
+      const cursor = options?.cursor;
+
+      // Get all keys matching prefix
+      let matchingKeys = Array.from(store.keys())
+        .filter(key => key.startsWith(prefix))
+        .sort();
+
+      // Apply startAfter if provided
+      if (startAfter) {
+        matchingKeys = matchingKeys.filter(key => key > startAfter);
+      }
+
+      // Apply cursor (simple implementation: cursor is the last key from previous page)
+      if (cursor) {
+        const cursorIndex = matchingKeys.indexOf(cursor);
+        if (cursorIndex >= 0) {
+          matchingKeys = matchingKeys.slice(cursorIndex + 1);
+        }
+      }
+
+      // Apply limit
+      const truncated = matchingKeys.length > limit;
+      const resultKeys = matchingKeys.slice(0, limit);
+      const nextCursor = truncated && resultKeys.length > 0 ? resultKeys[resultKeys.length - 1] : undefined;
+
+      // Build R2Object array
+      const objects: R2Object[] = resultKeys.map(key => {
+        const entry = store.get(key);
+        const size = entry?.content instanceof ArrayBuffer ? entry.content.byteLength : (entry?.content?.length ?? 0);
+        const etag = `"${key}"`;
+        return {
+          key,
+          version: "1",
+          size,
+          etag,
+          httpEtag: etag,
+          checksums: {},
+          uploaded: new Date(),
+          httpMetadata: entry?.contentType ? { contentType: entry.contentType } : undefined,
+          storageClass: "STANDARD",
+          writeHttpMetadata: (headers: Headers) => {
+            if (entry?.contentType) {
+              headers.set("Content-Type", entry.contentType);
+            }
+          },
+        } as R2Object;
+      });
+
+      if (truncated && nextCursor) {
+        return {
+          objects,
+          delimitedPrefixes: [],
+          truncated: true,
+          cursor: nextCursor,
+        };
+      }
+
+      return {
+        objects,
+        delimitedPrefixes: [],
+        truncated: false,
+      };
+    },
   } as unknown as R2Bucket;
 
   return { bucket, store };

@@ -1,7 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import type { StateService, GlobalState, TokenState, RevenueReport } from "@/types/domain";
 import type { AppError } from "@/types/app-error";
-import { putJsonR2, getJsonR2, putImageR2, resolveR2Bucket } from "@/lib/r2";
+import { putJsonR2, getJsonR2, resolveR2Bucket } from "@/lib/r2";
 
 type StateServiceDeps = {
   r2Bucket?: R2Bucket;
@@ -11,17 +11,6 @@ const stateKeys = {
   globalState: () => "state/global.json",
   tokenState: (ticker: string) => `state/${ticker}.json`,
   revenue: (minuteIso: string) => `revenue/${minuteIso}.json`,
-};
-
-const buildPublicPath = (key: string): string => {
-  const normalized = key.replace(/^\/+/, "");
-  const keySegments = normalized
-    .split("/")
-    .filter(Boolean)
-    .map(segment => encodeURIComponent(segment));
-  // Use direct API route for binary data (images) since browsers make direct HTTP requests
-  // tRPC streaming cannot be used with <img src> tags
-  return `/api/r2/${keySegments.join("/")}`;
 };
 
 /**
@@ -69,14 +58,6 @@ export function createStateService({ r2Bucket }: StateServiceDeps = {}): StateSe
     return ok(undefined);
   }
 
-  async function storeImage(key: string, buf: ArrayBuffer): Promise<Result<string, AppError>> {
-    const putResult = await putImageR2(bucket, key, buf, "image/webp");
-    if (putResult.isErr()) {
-      return err(putResult.error);
-    }
-    return ok(buildPublicPath(key));
-  }
-
   async function writeRevenue(report: RevenueReport, minuteIso: string): Promise<Result<void, AppError>> {
     return putJsonR2(bucket, stateKeys.revenue(minuteIso), report);
   }
@@ -90,7 +71,6 @@ export function createStateService({ r2Bucket }: StateServiceDeps = {}): StateSe
     writeGlobalState,
     readTokenState,
     writeTokenStates,
-    storeImage,
     writeRevenue,
     readRevenue,
   };

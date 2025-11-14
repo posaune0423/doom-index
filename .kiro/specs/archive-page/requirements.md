@@ -13,6 +13,7 @@ DOOM INDEX のアーカイブページ機能は、これまでに生成された
 ### データ構造の定義
 
 **R2ストレージ構造**:
+
 ```
 r2://doom-index-storage/
 ├── images/
@@ -24,6 +25,7 @@ r2://doom-index-storage/
 ```
 
 **ファイル名形式**:
+
 - 画像: `DOOM_{YYYYMMDDHHmm}_{paramsHash}_{seed}.webp`
   - `{YYYYMMDDHHmm}`: タイムスタンプ（年4桁、月2桁、日2桁、時2桁、分2桁）
   - `{paramsHash}`: 視覚パラメータのハッシュ（8文字、小文字）
@@ -31,23 +33,25 @@ r2://doom-index-storage/
 - メタデータ: `DOOM_{YYYYMMDDHHmm}_{paramsHash}_{seed}.json`
 
 **メタデータJSON構造**:
+
 ```typescript
 {
-  id: string;                    // ファイル名ベース
-  timestamp: string;              // ISO 8601形式
-  minuteBucket: string;          // 分バケット（例: "2025-11-14T12:34:00Z"）
-  paramsHash: string;            // 視覚パラメータのハッシュ
-  seed: string;                   // シード値
-  mcRounded: McMapRounded;       // 各トークンのMC値（丸め済み）
-  visualParams: VisualParams;    // 視覚パラメータ
-  imageUrl: string;               // 公開URL
-  fileSize: number;              // バイト数
-  prompt: string;                 // プロンプトテキスト
-  negative: string;               // ネガティブプロンプト
+  id: string; // ファイル名ベース
+  timestamp: string; // ISO 8601形式
+  minuteBucket: string; // 分バケット（例: "2025-11-14T12:34:00Z"）
+  paramsHash: string; // 視覚パラメータのハッシュ
+  seed: string; // シード値
+  mcRounded: McMapRounded; // 各トークンのMC値（丸め済み）
+  visualParams: VisualParams; // 視覚パラメータ
+  imageUrl: string; // 公開URL
+  fileSize: number; // バイト数
+  prompt: string; // プロンプトテキスト
+  negative: string; // ネガティブプロンプト
 }
 ```
 
 **例**:
+
 - 画像パス: `images/2025/11/14/DOOM_202511141234_abc12345_def45678.webp`
 - メタデータパス: `images/2025/11/14/DOOM_202511141234_abc12345_def45678.json`
 

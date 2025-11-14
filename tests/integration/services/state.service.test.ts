@@ -46,20 +46,6 @@ describe("StateService (5.1)", () => {
     }
   });
 
-  it("stores image binaries and returns URL", async () => {
-    const { bucket } = createMemoryR2Client();
-    const service = createStateService({ r2Bucket: bucket });
-    const buffer = new ArrayBuffer(8);
-    const storeResult = await service.storeImage("images/test.webp", buffer);
-    expect(storeResult.isOk()).toBe(true);
-    if (storeResult.isOk()) {
-      // Direct API route format: /api/r2/images/test.webp
-      expect(storeResult.value).toContain("/api/r2");
-      expect(storeResult.value).toContain("images");
-      expect(storeResult.value).toContain("test.webp");
-    }
-  });
-
   it("persists revenue reports", async () => {
     const { bucket, store } = createMemoryR2Client();
     const service = createStateService({ r2Bucket: bucket });

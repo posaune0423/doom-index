@@ -90,7 +90,7 @@ graph TB
 
 1. **日付ベースプレフィックス構造の採用**
    - **Context**: 数万枚の画像を効率的にクエリする必要がある
-   - **Alternatives**: 
+   - **Alternatives**:
      - フラット構造（`images/DOOM_*.webp`）: 全オブジェクトスキャンが必要
      - ハッシュベース構造（`images/{hash}/DOOM_*.webp`）: 時間フィルタリングが困難
      - 日付ベース構造（`images/{YYYY}/{MM}/{DD}/DOOM_*.webp`）: 時間フィルタリングが効率的
@@ -190,18 +190,18 @@ flowchart TD
 
 ## Requirements Traceability
 
-| Requirement | Requirement Summary | Components | Interfaces | Flows |
-|-------------|---------------------|------------|------------|-------|
-| 1.1-1.9 | 画像生成時の統一されたデータ構造とメタデータ保存 | GenerationService, StateService | storeImageWithMetadata() | 画像生成時のメタデータ保存フロー |
-| 2.1-2.12 | R2リストAPIによる画像一覧取得と時間ベースフィルタリング | ArchiveService, ArchiveAPI | listArchiveItems() | アーカイブ一覧取得フロー、時間ベースフィルタリングフロー |
-| 3.1-3.5 | アーカイブアイテムの型定義とAPIレスポンス | ArchiveService, ArchiveAPI | ArchiveItem型、型ガード | アーカイブ一覧取得フロー |
-| 4.1-4.4 | アーカイブページのNext.jsルート実装 | ArchivePage | /archive route | - |
-| 5.1-5.5 | Three.js内でのアーカイブギャラリー表示 | ArchiveScene | ArchiveScene component | - |
-| 6.1-6.5 | 仮想化によるレンダリング負荷低減 | ArchiveScene | Virtualization logic | - |
-| 7.1-7.5 | ページネーションUIとナビゲーション | ArchivePage, ArchiveUI | Pagination controls | - |
-| 8.1-8.8 | 画像メタデータの表示と時間ベースフィルタリング | ArchivePage, ArchiveUI, ArchiveAPI | Date range picker, Metadata modal | 時間ベースフィルタリングフロー |
-| 9.1-9.6 | クリーンなデータ構造の強制と整合性保証 | GenerationService, ArchiveService | Validation logic | 画像生成時のメタデータ保存フロー |
-| 10.1-10.7 | パフォーマンス最適化とキャッシュ戦略 | ArchiveAPI, ArchivePage | React Query cache | - |
+| Requirement | Requirement Summary                                     | Components                         | Interfaces                        | Flows                                                    |
+| ----------- | ------------------------------------------------------- | ---------------------------------- | --------------------------------- | -------------------------------------------------------- |
+| 1.1-1.9     | 画像生成時の統一されたデータ構造とメタデータ保存        | GenerationService, StateService    | storeImageWithMetadata()          | 画像生成時のメタデータ保存フロー                         |
+| 2.1-2.12    | R2リストAPIによる画像一覧取得と時間ベースフィルタリング | ArchiveService, ArchiveAPI         | listArchiveItems()                | アーカイブ一覧取得フロー、時間ベースフィルタリングフロー |
+| 3.1-3.5     | アーカイブアイテムの型定義とAPIレスポンス               | ArchiveService, ArchiveAPI         | ArchiveItem型、型ガード           | アーカイブ一覧取得フロー                                 |
+| 4.1-4.4     | アーカイブページのNext.jsルート実装                     | ArchivePage                        | /archive route                    | -                                                        |
+| 5.1-5.5     | Three.js内でのアーカイブギャラリー表示                  | ArchiveScene                       | ArchiveScene component            | -                                                        |
+| 6.1-6.5     | 仮想化によるレンダリング負荷低減                        | ArchiveScene                       | Virtualization logic              | -                                                        |
+| 7.1-7.5     | ページネーションUIとナビゲーション                      | ArchivePage, ArchiveUI             | Pagination controls               | -                                                        |
+| 8.1-8.8     | 画像メタデータの表示と時間ベースフィルタリング          | ArchivePage, ArchiveUI, ArchiveAPI | Date range picker, Metadata modal | 時間ベースフィルタリングフロー                           |
+| 9.1-9.6     | クリーンなデータ構造の強制と整合性保証                  | GenerationService, ArchiveService  | Validation logic                  | 画像生成時のメタデータ保存フロー                         |
+| 10.1-10.7   | パフォーマンス最適化とキャッシュ戦略                    | ArchiveAPI, ArchivePage            | React Query cache                 | -                                                        |
 
 ## Components and Interfaces
 
@@ -228,12 +228,12 @@ flowchart TD
 interface StateService {
   // Existing methods...
   storeImage(key: string, buf: ArrayBuffer): Promise<Result<string, AppError>>;
-  
+
   // New method for archive feature
   storeImageWithMetadata(
     imageBuffer: ArrayBuffer,
     metadata: ArchiveItemMetadata,
-    minuteBucket: string
+    minuteBucket: string,
   ): Promise<Result<{ imageUrl: string; imageKey: string; metadataKey: string }, AppError>>;
 }
 ```
@@ -273,11 +273,11 @@ interface ArchiveService {
 }
 
 type ArchiveListOptions = {
-  prefix?: string;           // Date-based prefix: images/YYYY/MM/DD/
-  cursor?: string;            // R2 cursor for pagination
-  limit?: number;             // Max 100, default 20
-  startDate?: string;        // YYYY-MM-DD format
-  endDate?: string;          // YYYY-MM-DD format
+  prefix?: string; // Date-based prefix: images/YYYY/MM/DD/
+  cursor?: string; // R2 cursor for pagination
+  limit?: number; // Max 100, default 20
+  startDate?: string; // YYYY-MM-DD format
+  endDate?: string; // YYYY-MM-DD format
 };
 
 type ArchiveListResponse = {
@@ -310,17 +310,19 @@ type ArchiveListResponse = {
 
 **API Contract**:
 
-| Method | Endpoint | Request | Response | Errors |
-|--------|----------|---------|----------|--------|
-| GET | /api/archive | Query: `cursor?`, `limit?`, `startDate?`, `endDate?` | `{ items: ArchiveItem[], cursor?: string, hasMore: boolean }` | 400, 500 |
+| Method | Endpoint     | Request                                              | Response                                                      | Errors   |
+| ------ | ------------ | ---------------------------------------------------- | ------------------------------------------------------------- | -------- |
+| GET    | /api/archive | Query: `cursor?`, `limit?`, `startDate?`, `endDate?` | `{ items: ArchiveItem[], cursor?: string, hasMore: boolean }` | 400, 500 |
 
 **Request Schema**:
+
 - `cursor`: string (optional) - R2 cursor for pagination
 - `limit`: number (optional, default: 20, max: 100) - Number of items per page
 - `startDate`: string (optional) - Date in `YYYY-MM-DD` format
 - `endDate`: string (optional) - Date in `YYYY-MM-DD` format
 
 **Response Schema**:
+
 ```typescript
 {
   items: ArchiveItem[];
@@ -357,19 +359,22 @@ type ArchiveListResponse = {
 **UI/UX設計**:
 
 **1. ページレイアウト**:
+
 - **構造**: `TopBar`（固定ヘッダー）+ `ArchiveScene`（3D Canvas、全画面）+ `ArchivePaginationControls`（固定フッター）
 - **レイアウト**: Canvasは全画面（`position: fixed, width: 100vw, height: 100vh`）、ページネーションコントロールは画面下部に固定配置
 
 **2. 1ページあたりの表示枚数**:
+
 - **初期表示**: 50枚（`limit=50`）
 - **3D空間での配置**: 5列×10行のグリッド（合計50枚）
 - **仮想化**: ビューポート内の約25-30枚のみをレンダリング（5列×5-6行）
-- **理由**: 
+- **理由**:
   - 50枚は1ページのデータ量として適切（APIの`limit`最大100件の半分）
   - 5列×10行のグリッドは、スクロール体験とパフォーマンスのバランスが良い
   - 仮想化により、実際にレンダリングするのは25-30枚程度
 
 **3. ページネーションUI**:
+
 - **配置**: 画面下部中央に固定配置（`position: fixed, bottom: 32px, left: 50%, transform: translateX(-50%)`）
 - **スタイル**: 既存の`TopBar`や`RealtimeDashboard`と同様のデザイン（`rgba(0, 0, 0, 0.8)`背景、`backdrop-blur`、`border`）
 - **コンポーネント構成**:
@@ -377,33 +382,36 @@ type ArchiveListResponse = {
   - **ページ情報**: 現在のページ範囲表示（例: "1-50 of 1,234"）
   - **次へボタン**: 右矢印アイコン、`hasMore`が`true`の場合のみ有効
   - **ローディングインジケータ**: データ取得中はスピナーを表示
-- **インタラクション**: 
+- **インタラクション**:
   - ボタンクリックで`cursor`を更新し、URLクエリパラメータを変更
   - ブラウザの戻る/進むボタンで動作（URLクエリパラメータに基づく）
 
 **4. 日付フィルタUI**:
+
 - **配置**: 画面右上（`TopBar`の下、または`TopBar`内に統合）
 - **コンポーネント**: 日付範囲ピッカー（開始日・終了日）
 - **スタイル**: 既存のUIパターンに合わせたモーダルまたはドロップダウン
 - **動作**: 日付選択で`startDate`と`endDate`クエリパラメータを更新
 
 **5. 詳細モーダル**:
+
 - **トリガー**: 画像クリック
 - **配置**: 画面中央にモーダル表示（全画面オーバーレイ）
-- **内容**: 
+- **内容**:
   - 高解像度画像（拡大表示）
   - メタデータ（生成時刻、MC値、視覚パラメータ、シード値、ファイルサイズ）
   - プロンプトテキスト（全文表示）
   - ネガティブプロンプト
   - 各トークンのMC値の詳細表示（`mcRounded`の全8トークン）
 - **スタイル**: 既存の`RealtimeDashboard`のヘルプオーバーレイと同様のデザイン
-- **操作**: 
+- **操作**:
   - 閉じるボタン（右上）
   - ESCキーで閉じる
   - オーバーレイクリックで閉じる
   - 画像のピンチズーム・パン操作（モバイル）
 
 **6. レスポンシブデザイン（モバイル対応）**:
+
 - **デスクトップ（`>= 768px`）**:
   - グリッドレイアウト: 5列×10行（50枚/ページ）
   - ページネーション: 画面下部中央に固定
@@ -448,12 +456,14 @@ interface ArchiveSceneProps {
 **実装詳細**:
 
 **1. Canvas設定**:
+
 - 既存の`GalleryScene`と同様のCanvas設定を使用
 - `frameloop="demand"`で省電力化
 - 既存の`Lights`コンポーネントを再利用
 - 既存の`GalleryRoom`コンポーネントを再利用（背景として）
 
 **2. グリッドレイアウト**:
+
 - **デスクトップ（`>= 768px`）**:
   - **グリッドサイズ**: 横5列、縦は可変（1ページあたり10行、合計50枚）
   - **各画像の間隔**: X軸方向1.2m、Z軸方向1.2m
@@ -472,6 +482,7 @@ interface ArchiveSceneProps {
   - **次のページ**: 前のページの最後のZ位置から続けて配置（例: 1ページ目が0-25m、2ページ目が25-50m）
 
 **3. 仮想化の実装**:
+
 - **ビューポート計算**: `useThree`フックでカメラ位置とビューポートを取得
 - **可視判定**: 各画像の3D位置をカメラの視錐台（frustum）と比較
 - **レンダリング範囲**: カメラ前方±2列、上下±3行のバッファ領域をレンダリング
@@ -479,11 +490,12 @@ interface ArchiveSceneProps {
 - **動的読み込み**: スクロール時に新しい画像を`Suspense`で遅延読み込み
 
 **4. スクロールとカメラ連動**:
+
 - **スクロール方式**: HTMLのスクロールイベントを監視し、Z軸方向にカメラを移動
 - **デスクトップ（`>= 768px`）**:
   - **カメラ初期位置**: `[0, 0.8, 2.0]`（1ページ目の中央付近を見る）
   - **カメラ移動**: `useFrame`でスクロール位置に応じてカメラのZ位置を更新
-  - **スクロール計算**: 
+  - **スクロール計算**:
     - 1行あたりの高さ: 120px（仮想スクロール高さ）
     - スクロール位置からZ座標への変換: `targetZ = 2.0 + (scrollY / 120) * 1.2`
     - カメラを`[0, 0.8, targetZ]`に配置
@@ -492,7 +504,7 @@ interface ArchiveSceneProps {
 - **モバイル（`< 768px`）**:
   - **カメラ初期位置**: `[0, 0.8, 1.5]`（より近い位置から見る）
   - **カメラ移動**: `useFrame`でスクロール位置に応じてカメラのZ位置を更新
-  - **スクロール計算**: 
+  - **スクロール計算**:
     - 1行あたりの高さ: 100px（仮想スクロール高さ、デスクトップより狭く）
     - スクロール位置からZ座標への変換: `targetZ = 1.5 + (scrollY / 100) * 1.0`
     - カメラを`[0, 0.8, targetZ]`に配置
@@ -500,11 +512,13 @@ interface ArchiveSceneProps {
   - **仮想スクロール高さ**: 全アイテム数×100px（1行あたりの高さ）で計算し、HTMLの`scrollHeight`を設定
 
 **5. 画像コンポーネント**:
+
 - **ArchiveFramedPainting**: 既存の`FramedPainting`をベースに、位置とクリックハンドラを追加
 - **テクスチャ管理**: `useTexture`で各画像のテクスチャを読み込み、`Suspense`でローディング状態を管理
 - **クリック処理**: 画像クリックで詳細モーダルを表示（メタデータを表示）
 
 **6. パフォーマンス最適化**:
+
 - **InstancedMesh**: 同一の額縁モデルは`InstancedMesh`で描画（検討）
 - **LOD**: 遠景の画像は低解像度テクスチャを使用（検討）
 - **テクスチャプール**: 使用済みテクスチャをプールして再利用
@@ -528,8 +542,8 @@ const ArchivePage: React.FC = () => {
   return (
     <main style={{ width: "100vw", height: "100vh", position: "relative" }}>
       <TopBar />
-      <ArchiveScene 
-        items={data?.items ?? []} 
+      <ArchiveScene
+        items={data?.items ?? []}
         hasMore={data?.hasMore ?? false}
         isLoading={isLoading}
         onLoadMore={() => {
@@ -719,6 +733,7 @@ const ArchivePaginationControls: React.FC<ArchivePaginationControlsProps> = ({
 **追加実装コンポーネント**:
 
 **ArchiveFramedPainting**:
+
 - 既存の`FramedPainting`を拡張したコンポーネント
 - `position`プロップで3D空間内の位置を指定
 - `onClick`プロップでクリックハンドラを追加
@@ -726,11 +741,13 @@ const ArchivePaginationControls: React.FC<ArchivePaginationControlsProps> = ({
 - メモリ管理: アンマウント時にテクスチャを`dispose()`で解放
 
 **useScrollY** (カスタムフック):
+
 - HTMLのスクロールイベントを監視
 - `window.scrollY`を取得し、React stateとして管理
 - デバウンス処理でパフォーマンスを最適化
 
 **useViewportRange** (カスタムフック):
+
 - カメラ位置とビューポートから可視範囲を計算
 - バッファ領域を考慮した範囲を返却
 - `useFrame`内で呼び出し、毎フレーム更新
@@ -780,28 +797,33 @@ const ArchivePaginationControls: React.FC<ArchivePaginationControlsProps> = ({
 **シーン設計の詳細**:
 
 **1. カメラ設定**:
+
 - **初期位置**: `[0, 0.8, 2.0]`（1ページ目の中央付近を見る）
 - **LookAt**: `[0, 0.8, 4.0]`（既存の`GalleryScene`と同じ）
 - **FOV**: 50度（既存と同じ）
 - **制約**: カメラはZ軸方向にのみ移動（X、Yは固定）
 
 **2. スクロール領域**:
+
 - **仮想スクロール高さ**: `totalItems * 120px`（1行あたり120px）
 - **スクロールコンテナ**: HTMLの`<div>`で全高さを確保し、`overflow-y: auto`
 - **スクロール連動**: `scrollY`を監視し、カメラのZ位置を更新
 
 **3. ページネーションとスクロールの関係**:
+
 - **ページ切り替え**: 前へ/次へボタンで`cursor`を変更し、新しいデータを取得
 - **スクロール位置**: ページ切り替え時にスクロール位置をリセット（`scrollTo(0, 0)`）
 - **カメラ位置**: ページ切り替え時にカメラを初期位置（`[0, 0.8, 2.0]`）にリセット
 
 **4. 無限スクロールの検討**:
+
 - **実装方式**: スクロールが最下部に近づいたら`onLoadMore`を呼び出し、次のページを読み込む
 - **統合**: 既存のページネーションUIと併用可能（「もっと見る」ボタンまたは自動読み込み）
 - **メリット**: 連続的な閲覧体験
 - **デメリット**: メモリ使用量の増加（仮想化で緩和）
 
 **5. レスポンシブ対応**:
+
 - **モバイル**: グリッドを3列に変更（5列から3列へ）
 - **タブレット**: 4列に変更
 - **デスクトップ**: 5列を維持
@@ -881,6 +903,7 @@ Row 9 (Z=10.8): [45][46][47][48][49]
 **UIコンポーネントの詳細仕様**:
 
 **ArchivePaginationControls**:
+
 - **位置**: `position: fixed, bottom: 32px, left: 50%, transform: translateX(-50%)`
 - **サイズ**: `padding: 12px 24px`, `gap: 24px`
 - **背景**: `rgba(0, 0, 0, 0.8)`, `backdrop-filter: blur(10px)`
@@ -889,16 +912,18 @@ Row 9 (Z=10.8): [45][46][47][48][49]
 - **無効状態**: `opacity: 0.4`, `cursor: not-allowed`
 
 **ArchiveDateFilter**:
+
 - **位置**: `TopBar`内に統合、または`position: fixed, top: 80px, right: 32px`
 - **スタイル**: 既存の`TopBar`のリンクボタンと同様のデザイン
 - **機能**: クリックでモーダルまたはドロップダウンを表示
 - **日付ピッカー**: HTML5の`<input type="date">`を使用
 
 **ArchiveDetailModal**:
+
 - **位置**: 画面中央（`position: fixed, top: 50%, left: 50%, transform: translate(-50%, -50%)`）
 - **サイズ**: `maxWidth: 600px`, `maxHeight: 80vh`, `overflow-y: auto`
 - **背景**: `rgba(12, 12, 18, 0.97)`, `backdrop-filter: blur(10px)`（既存の`RealtimeDashboard`のヘルプオーバーレイと同様）
-- **内容**: 
+- **内容**:
   - 画像プレビュー（上部）
   - メタデータテーブル（生成時刻、MC値、視覚パラメータ、シード値、ファイルサイズ）
   - 閉じるボタン（右上）
@@ -937,7 +962,7 @@ sequenceDiagram
 
 **1ページあたりの表示枚数の決定理由**:
 
-- **50枚（5列×10行）**: 
+- **50枚（5列×10行）**:
   - APIの`limit`最大100件の半分で、適度なデータ量
   - 5列×10行のグリッドは、スクロール体験とパフォーマンスのバランスが良い
   - 仮想化により、実際にレンダリングするのは25-30枚程度（ビューポート内のみ）
@@ -945,10 +970,10 @@ sequenceDiagram
 
 **代替案の検討**:
 
-- **20枚（5列×4行）**: 
+- **20枚（5列×4行）**:
   - メリット: より軽量、初期読み込みが速い
   - デメリット: ページ切り替えが頻繁になり、UXが悪い
-- **100枚（5列×20行）**: 
+- **100枚（5列×20行）**:
   - メリット: ページ切り替えが少ない
   - デメリット: 初期読み込みが遅い、メモリ使用量が増加
 - **選択**: 50枚が最適（バランスが良い）
@@ -956,6 +981,7 @@ sequenceDiagram
 **スクロールとページネーションの統合設計**:
 
 **方式1: ページネーション優先（採用）**:
+
 - **動作**: 前へ/次へボタンでページを切り替え、各ページ内でスクロール可能
 - **スクロール範囲**: 1ページあたり50枚（5列×10行）、スクロール高さ1200px（10行×120px）
 - **ページ切り替え**: ボタンクリックで`cursor`を変更し、新しいデータを取得
@@ -965,6 +991,7 @@ sequenceDiagram
 - **デメリット**: ページ間の連続性が低い
 
 **方式2: 無限スクロール（将来の拡張）**:
+
 - **動作**: スクロールが最下部に近づいたら自動的に次のページを読み込む
 - **実装**: `onScroll`イベントで`scrollY + viewportHeight >= scrollHeight - threshold`を検知
 - **統合**: ページネーションUIと併用可能（「もっと見る」ボタンも提供）
@@ -976,10 +1003,12 @@ sequenceDiagram
 **スクロール実装の詳細**:
 
 **仮想スクロールコンテナ**:
-- **HTML構造**: 
+
+- **HTML構造**:
   ```html
   <div style="height: 100vh; overflow-y: auto;">
-    <div style="height: 1200px;"> <!-- 仮想高さ（10行×120px） -->
+    <div style="height: 1200px;">
+      <!-- 仮想高さ（10行×120px） -->
       <!-- ArchiveScene Canvas (position: fixed, 全画面) -->
     </div>
   </div>
@@ -991,6 +1020,7 @@ sequenceDiagram
 - **Z座標変換**: `targetZ = 2.0 + rowIndex * 1.2`（カメラのZ位置）
 
 **ページ切り替え時の動作**:
+
 1. ユーザーが「次へ」ボタンをクリック
 2. `cursor`をURLクエリパラメータに設定
 3. React Queryが新しいデータを取得
@@ -1022,17 +1052,17 @@ sequenceDiagram
 
 ```typescript
 type ArchiveItem = {
-  id: string;                    // File name without extension
-  imageUrl: string;              // Public URL via /api/r2/[...key]
-  timestamp: string;             // ISO 8601 format
-  minuteBucket: string;          // Minute bucket (e.g., "2025-11-14T12:34:00Z")
-  paramsHash: string;            // Visual params hash (8 chars, lowercase)
-  seed: string;                  // Seed value (12 chars, lowercase)
-  mcRounded: McMapRounded;       // Rounded MC values per token
-  visualParams: VisualParams;    // Visual parameters
-  fileSize: number;              // Bytes
-  prompt: string;                // Prompt text
-  negative: string;              // Negative prompt
+  id: string; // File name without extension
+  imageUrl: string; // Public URL via /api/r2/[...key]
+  timestamp: string; // ISO 8601 format
+  minuteBucket: string; // Minute bucket (e.g., "2025-11-14T12:34:00Z")
+  paramsHash: string; // Visual params hash (8 chars, lowercase)
+  seed: string; // Seed value (12 chars, lowercase)
+  mcRounded: McMapRounded; // Rounded MC values per token
+  visualParams: VisualParams; // Visual parameters
+  fileSize: number; // Bytes
+  prompt: string; // Prompt text
+  negative: string; // Negative prompt
 };
 ```
 
@@ -1070,6 +1100,7 @@ type ArchiveItemMetadata = {
 - **Partitioning**: 日付ベースのプレフィックスにより、自然なパーティショニングが実現される
 
 **Example Keys**:
+
 - Image: `images/2025/11/14/DOOM_202511141234_abc12345_def45678.webp`
 - Metadata: `images/2025/11/14/DOOM_202511141234_abc12345_def45678.json`
 
@@ -1141,6 +1172,7 @@ interface ArchiveDetailModalProps {
 **実装詳細**:
 
 **1. レイアウト構造**:
+
 - **デスクトップ（`>= 768px`）**:
   - 画面中央に配置、最大幅`1200px`、最大高さ`90vh`
   - 左側: 画像表示エリア（60%幅）
@@ -1152,8 +1184,9 @@ interface ArchiveDetailModalProps {
   - 閉じるボタン: 右上に固定
 
 **2. 画像表示エリア**:
+
 - **画像**: `object-fit: contain`で高解像度画像を表示
-- **ズーム操作**: 
+- **ズーム操作**:
   - デスクトップ: マウスホイールでズーム、ドラッグでパン
   - モバイル: ピンチズーム、スワイプでパン
 - **初期表示**: 画像全体が収まるサイズで表示
@@ -1161,6 +1194,7 @@ interface ArchiveDetailModalProps {
 - **背景**: `rgba(0, 0, 0, 0.9)`
 
 **3. メタデータ表示エリア**:
+
 - **セクション構成**:
   1. **基本情報**:
      - 生成時刻（`timestamp`、ローカル時刻に変換）
@@ -1182,7 +1216,8 @@ interface ArchiveDetailModalProps {
 - **スクロール**: メタデータが長い場合はスクロール可能
 
 **4. 操作UI**:
-- **閉じるボタン**: 
+
+- **閉じるボタン**:
   - 配置: 右上（`position: fixed, top: 16px, right: 16px`）
   - スタイル: 既存の`TopBar`のアイコンボタンと同様
   - 操作: クリック/タップで閉じる
@@ -1363,6 +1398,7 @@ const ArchiveDetailModal: React.FC<ArchiveDetailModalProps> = ({ item, isOpen, o
 ```
 
 **パフォーマンス最適化**:
+
 - 画像のプリロード: モーダルを開く前に高解像度画像をプリロード
 - ズーム・パン操作: `react-zoom-pan-pinch`ライブラリを使用して最適化
 - メタデータのメモ化: `useMemo`で計算結果をキャッシュ
@@ -1371,7 +1407,7 @@ const ArchiveDetailModal: React.FC<ArchiveDetailModalProps> = ({ item, isOpen, o
 
 ### Unit Tests
 
-- **ArchiveService.listArchiveItems()**: 
+- **ArchiveService.listArchiveItems()**:
   - 日付プレフィックスの生成ロジック
   - メタデータの解析と検証ロジック
   - ソートロジック（`timestamp`降順）

@@ -5,6 +5,7 @@ import { createStateService } from "@/services/state";
 import { createGenerationService } from "@/services/generation";
 import { createAutoResolveProvider } from "@/lib/providers";
 import { createRevenueEngine } from "@/services/revenue";
+import { createArchiveStorageService } from "@/services/archive-storage";
 import { resolveR2Bucket } from "@/lib/r2";
 
 /**
@@ -27,6 +28,7 @@ export function createServicesForWorkers(r2Bucket?: R2Bucket) {
   const marketCapService = createMarketCapService({ fetch, log: logger });
   const promptService = createPromptService();
   const stateService = createStateService({ r2Bucket: bucket });
+  const archiveStorageService = createArchiveStorageService({ r2Bucket: bucket });
   // Provider automatically resolves based on model in ImageRequest
   const imageProvider = createAutoResolveProvider();
   const revenueEngine = createRevenueEngine();
@@ -39,6 +41,7 @@ export function createServicesForWorkers(r2Bucket?: R2Bucket) {
     imageProvider,
     stateService,
     revenueEngine,
+    archiveStorageService,
     fetchTradeSnapshots,
     log: logger,
   });
@@ -47,6 +50,7 @@ export function createServicesForWorkers(r2Bucket?: R2Bucket) {
     marketCapService,
     promptService,
     stateService,
+    archiveStorageService,
     generationService,
     imageProvider,
     revenueEngine,
