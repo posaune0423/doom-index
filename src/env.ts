@@ -17,10 +17,6 @@ export const env = createEnv({
     // Image Provider API Keys
     OPENAI_API_KEY: z.string().optional(),
     RUNWARE_API_KEY: z.string().min(1),
-
-    // Node Environment
-    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-    LOG_LEVEL: z.enum(["ERROR", "WARN", "INFO", "DEBUG", "LOG"]).default("DEBUG"),
   },
 
   /**
@@ -42,6 +38,9 @@ export const env = createEnv({
     // If not specified, defaults to "runware:100@1"
     // The provider will be automatically resolved based on the model
     IMAGE_MODEL: z.string().optional(),
+    // Node Environment
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    LOG_LEVEL: z.enum(["ERROR", "WARN", "INFO", "DEBUG", "LOG"]).default("DEBUG"),
   },
 
   /**
