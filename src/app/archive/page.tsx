@@ -2,10 +2,14 @@ import { Header } from "@/components/ui/header";
 import { ArchiveContent } from "@/components/archive/archive-content";
 import type { NextPage } from "next";
 import type { Metadata } from "next";
+import { getBaseUrl } from "@/utils/url";
+
+const metadataBase = new URL(getBaseUrl());
 
 export const metadata: Metadata = {
   title: "Archive - DOOM INDEX",
   description: "Browse the archive of generative art pieces created by DOOM INDEX",
+  metadataBase,
 };
 
 interface ArchivePageProps {

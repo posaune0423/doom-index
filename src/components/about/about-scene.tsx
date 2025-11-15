@@ -188,7 +188,7 @@ export const AboutScene: React.FC<AboutSceneProps> = ({ children, initialCameraP
       width: `${finalWidth}px`,
       height: `${finalHeight}px`,
     };
-  }, []);
+  }, [PAPER_ASPECT_RATIO]);
 
   // Calculate paper size for WebGL error fallback maintaining fixed aspect ratio
   const webglErrorPaperSize = useMemo(() => {
@@ -233,7 +233,7 @@ export const AboutScene: React.FC<AboutSceneProps> = ({ children, initialCameraP
       width: `${finalWidth}px`,
       height: `${finalHeight}px`,
     };
-  }, []);
+  }, [PAPER_ASPECT_RATIO]);
 
   // WebGLエラー時のみフォールバック表示
   if (webglError) {

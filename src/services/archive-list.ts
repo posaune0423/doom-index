@@ -268,9 +268,7 @@ export function createArchiveListService({ r2Bucket }: ArchiveListServiceDeps = 
           });
         }
 
-        const listResults = await Promise.all(
-          datePrefixes.map(prefix => listR2Objects(bucket, { limit, prefix })),
-        );
+        const listResults = await Promise.all(datePrefixes.map(prefix => listR2Objects(bucket, { limit, prefix })));
 
         const failedResult = listResults.find(result => result.isErr());
         if (failedResult && failedResult.isErr()) {

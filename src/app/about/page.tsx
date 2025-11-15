@@ -3,11 +3,15 @@ import { AboutScene } from "@/components/about/about-scene";
 import { Header } from "@/components/ui/header";
 import type { Metadata } from "next";
 import type { NextPage } from "next";
+import { getBaseUrl } from "@/utils/url";
+
+const metadataBase = new URL(getBaseUrl());
 
 export const metadata: Metadata = {
   title: "About - DOOM INDEX",
   description:
     "Learn about the DOOM INDEX project and its mission to visualize global indicators through generative art",
+  metadataBase,
 };
 
 const AboutPage: NextPage = async () => {

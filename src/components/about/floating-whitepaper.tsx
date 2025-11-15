@@ -138,7 +138,7 @@ export const FloatingWhitepaper: React.FC<FloatingWhitepaperProps> = ({
       paperWidth: `${finalWidth}px`,
       paperHeight: `${finalHeight}px`,
     };
-  }, [size]);
+  }, [size, PAPER_ASPECT_RATIO]);
 
   useEffect(() => {
     if (onHoverChange) {

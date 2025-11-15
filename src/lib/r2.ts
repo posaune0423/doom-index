@@ -188,7 +188,10 @@ export async function getImageR2(bucket: R2Bucket, key: string): Promise<Result<
 /**
  * List R2 objects with safe defaults and error handling
  */
-export async function listR2Objects(bucket: R2Bucket, options: R2ListParams = {}): Promise<Result<R2Objects, AppError>> {
+export async function listR2Objects(
+  bucket: R2Bucket,
+  options: R2ListParams = {},
+): Promise<Result<R2Objects, AppError>> {
   try {
     const listOptions: R2ListOptions = {};
 
