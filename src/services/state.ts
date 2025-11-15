@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import type { StateService, GlobalState, TokenState, RevenueReport } from "@/types/domain";
+import type { StateService, GlobalState, TokenState } from "@/types/domain";
 import type { AppError } from "@/types/app-error";
 import { putJsonR2, getJsonR2, resolveBucketOrThrow } from "@/lib/r2";
 
@@ -10,7 +10,6 @@ type StateServiceDeps = {
 const stateKeys = {
   globalState: () => "state/global.json",
   tokenState: (ticker: string) => `state/${ticker}.json`,
-  revenue: (minuteIso: string) => `revenue/${minuteIso}.json`,
 };
 
 /**
@@ -49,20 +48,10 @@ export function createStateService({ r2Bucket }: StateServiceDeps = {}): StateSe
     return ok(undefined);
   }
 
-  async function writeRevenue(report: RevenueReport, minuteIso: string): Promise<Result<void, AppError>> {
-    return putJsonR2(bucket, stateKeys.revenue(minuteIso), report);
-  }
-
-  async function readRevenue(minuteIso: string): Promise<Result<RevenueReport | null, AppError>> {
-    return getJsonR2<RevenueReport>(bucket, stateKeys.revenue(minuteIso));
-  }
-
   return {
     readGlobalState,
     writeGlobalState,
     readTokenState,
     writeTokenStates,
-    writeRevenue,
-    readRevenue,
   };
 }

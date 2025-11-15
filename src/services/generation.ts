@@ -7,14 +7,7 @@ import { env } from "@/env";
 import { TOKEN_TICKERS, type McMap, type McMapRounded } from "@/constants/token";
 import type { MarketCapService } from "@/services/market-cap";
 import type { PromptService, PromptComposition } from "@/services/prompt";
-import type {
-  ImageProvider,
-  StateService,
-  RevenueEngine,
-  TradeSnapshot,
-  RevenueReport,
-  TokenState,
-} from "@/types/domain";
+import type { ImageProvider, StateService, TokenState } from "@/types/domain";
 import type { AppError } from "@/types/app-error";
 import type { ArchiveStorageService } from "@/services/archive-storage";
 import type { ArchiveMetadata } from "@/types/archive";
@@ -27,7 +20,6 @@ export type MinuteEvaluation = {
   imageUrl?: string;
   paramsHash?: string;
   seed?: string;
-  revenue?: RevenueReport;
 };
 
 export type GenerationService = {
@@ -39,10 +31,7 @@ type GenerationDeps = {
   promptService: PromptService;
   imageProvider: ImageProvider;
   stateService: StateService;
-  revenueEngine: RevenueEngine;
   archiveStorageService: ArchiveStorageService; // Required: uses archive storage for images and metadata
-  fetchTradeSnapshots?: () => Promise<TradeSnapshot[]>;
-  generationRate?: number;
   log?: typeof logger;
 };
 
@@ -60,10 +49,7 @@ export function createGenerationService({
   promptService,
   imageProvider,
   stateService,
-  revenueEngine,
   archiveStorageService,
-  fetchTradeSnapshots = async () => [],
-  generationRate = 1,
   log = logger,
 }: GenerationDeps): GenerationService {
   /**
@@ -184,17 +170,6 @@ export function createGenerationService({
     if (archiveResult.isErr()) return err(archiveResult.error);
     const imageUrl = archiveResult.value.imageUrl;
 
-    const revenueSnapshots = await fetchTradeSnapshots();
-    const revenueCalculation = revenueEngine.calculateMinuteRevenue(revenueSnapshots, generationRate);
-    let revenueReport: RevenueReport | undefined;
-    if (revenueCalculation.isOk()) {
-      revenueReport = revenueCalculation.value;
-      const revenueWrite = await stateService.writeRevenue(revenueReport, composition.minuteBucket);
-      if (revenueWrite.isErr()) return err(revenueWrite.error);
-    } else {
-      log.warn("generation.revenue.skip", { cause: revenueCalculation.error });
-    }
-
     const globalWrite = await stateService.writeGlobalState({
       prevHash: hash,
       lastTs: minuteBucketToIso(composition.minuteBucket),
@@ -216,7 +191,6 @@ export function createGenerationService({
       imageUrl,
       paramsHash: composition.paramsHash,
       seed: composition.seed,
-      revenue: revenueReport,
     });
   }
 
