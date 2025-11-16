@@ -67,7 +67,7 @@ describe("Generation Service with Archive Integration", () => {
       readRevenue: async () => ok(null),
     };
 
-    const revenueEngine = {
+    const _revenueEngine = {
       calculateMinuteRevenue: () =>
         ok({
           perTokenFee: {
