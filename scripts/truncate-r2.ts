@@ -210,7 +210,12 @@ async function executeD1Query(sql: string, params: unknown[] = []): Promise<Resu
       });
     }
 
-    const result = (await response.json()) as { success: boolean; results?: unknown[]; result?: unknown[]; errors?: unknown[] };
+    const result = (await response.json()) as {
+      success: boolean;
+      results?: unknown[];
+      result?: unknown[];
+      errors?: unknown[];
+    };
     if (!result.success) {
       return err({
         type: "StorageError",
@@ -224,12 +229,12 @@ async function executeD1Query(sql: string, params: unknown[] = []): Promise<Resu
     const results = result.results || result.result || [];
     return ok(results);
   } catch (error) {
-      return err({
-        type: "StorageError",
-        op: "list",
-        key: "d1",
-        message: `D1 query failed: ${error instanceof Error ? error.message : String(error)}`,
-      });
+    return err({
+      type: "StorageError",
+      op: "list",
+      key: "d1",
+      message: `D1 query failed: ${error instanceof Error ? error.message : String(error)}`,
+    });
   }
 }
 
@@ -253,7 +258,8 @@ async function deleteD1Records(dryRun: boolean): Promise<Result<number, AppError
       if (Array.isArray(results) && results.length > 0) {
         const firstResult = results[0];
         if (Array.isArray(firstResult) && firstResult.length > 0) {
-          count = typeof firstResult[0] === "number" ? firstResult[0] : (firstResult[0] as { count: number })?.count || 0;
+          count =
+            typeof firstResult[0] === "number" ? firstResult[0] : (firstResult[0] as { count: number })?.count || 0;
         } else if (typeof firstResult === "object" && firstResult !== null) {
           count = (firstResult as { count: number })?.count || 0;
         }
