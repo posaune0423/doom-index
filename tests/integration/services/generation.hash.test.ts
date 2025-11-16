@@ -8,6 +8,7 @@ import type { PromptComposition } from "@/services/prompt";
 import type { AppError } from "@/types/app-error";
 import type { RevenueReport, TradeSnapshot } from "@/types/domain";
 import type { ArchiveStorageService } from "@/services/archive-storage";
+import { createArchiveIndexService } from "@/services/archive-index";
 import { LogLevel } from "@/utils/logger";
 
 const makeMap = (base: number): McMap =>
@@ -165,6 +166,7 @@ describe("GenerationService orchestration (4.x)", () => {
     const archiveStorageService: ArchiveStorageService = {
       storeImageWithMetadata: storeImageWithMetadataMock,
     };
+    const archiveIndexService = createArchiveIndexService({ d1Binding: undefined });
     const revenueEngine = {
       calculateMinuteRevenue: mock(() => ok(createRevenueReport())),
     };
@@ -189,9 +191,8 @@ describe("GenerationService orchestration (4.x)", () => {
       promptService,
       imageProvider,
       stateService,
-      revenueEngine,
       archiveStorageService,
-      fetchTradeSnapshots: tradeFetcher,
+      archiveIndexService,
       log: logger,
     });
 
@@ -204,7 +205,6 @@ describe("GenerationService orchestration (4.x)", () => {
       expect(result.value.imageUrl).toBe("https://cdn/new-image.webp");
       expect(result.value.paramsHash).toBe(promptComposition.paramsHash);
       expect(result.value.seed).toBe(promptComposition.seed);
-      expect(result.value.revenue?.totalFee).toBe(8);
     }
 
     expect(promptService.composePrompt.mock.calls.length).toBe(1);
@@ -212,8 +212,6 @@ describe("GenerationService orchestration (4.x)", () => {
     expect(storeImageWithMetadataMock.mock.calls.length).toBe(1);
     expect(stateService.writeGlobalState.mock.calls.length).toBe(1);
     expect(stateService.writeTokenStates.mock.calls.length).toBe(1);
-    expect(stateService.writeRevenue.mock.calls.length).toBe(1);
-    expect(revenueEngine.calculateMinuteRevenue.mock.calls.length).toBe(1);
   });
 
   it("propagates provider failures as Result.err", async () => {

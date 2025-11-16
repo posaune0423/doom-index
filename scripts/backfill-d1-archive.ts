@@ -6,10 +6,10 @@ import { logger } from "@/utils/logger";
 
 /**
  * Backfill script to migrate existing R2 archive metadata to D1
- * 
+ *
  * Usage:
  *   bun --env-file=.dev.vars scripts/backfill-d1-archive.ts
- * 
+ *
  * This script:
  * 1. Lists all .webp files in R2 (images/)
  * 2. Loads corresponding .json metadata files

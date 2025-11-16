@@ -102,38 +102,27 @@
       "indexes": {
         "idx_archive_ts_id": {
           "name": "idx_archive_ts_id",
-          "columns": [
-            "ts",
-            "id"
-          ],
+          "columns": ["ts", "id"],
           "isUnique": false
         },
         "idx_archive_ts": {
           "name": "idx_archive_ts",
-          "columns": [
-            "ts"
-          ],
+          "columns": ["ts"],
           "isUnique": false
         },
         "idx_archive_params_hash": {
           "name": "idx_archive_params_hash",
-          "columns": [
-            "params_hash"
-          ],
+          "columns": ["params_hash"],
           "isUnique": false
         },
         "idx_archive_seed": {
           "name": "idx_archive_seed",
-          "columns": [
-            "seed"
-          ],
+          "columns": ["seed"],
           "isUnique": false
         },
         "idx_archive_r2_key": {
           "name": "idx_archive_r2_key",
-          "columns": [
-            "r2_key"
-          ],
+          "columns": ["r2_key"],
           "isUnique": true
         }
       },

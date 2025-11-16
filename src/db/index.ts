@@ -10,7 +10,7 @@ let db: DrizzleD1Database<typeof schema> | undefined;
 /**
  * Get D1 database instance
  * Works in both Cloudflare Workers (direct env.DB) and Next.js/OpenNext (getCloudflareContext)
- * 
+ *
  * @param d1Binding - Optional D1Database binding (for Worker entrypoints)
  * @returns DrizzleD1Database instance
  */

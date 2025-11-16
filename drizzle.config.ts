@@ -2,7 +2,7 @@ import { existsSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { defineConfig } from "drizzle-kit";
 
-function _getLocalDb(): string {
+function getLocalDb(): string {
   const root = resolve(".wrangler");
   if (!existsSync(root)) throw new Error(".wrangler directory not found");
 
@@ -35,4 +35,7 @@ export default process.env.NODE_ENV === "production"
       schema: "./src/db/index.ts",
       dialect: "sqlite",
       out: "./migrations",
+      dbCredentials: {
+        url: getLocalDb(),
+      },
     });

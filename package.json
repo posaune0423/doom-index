@@ -23,7 +23,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "preview": "opennextjs-cloudflare preview --test-scheduled",
+    "preview": "opennextjs-cloudflare preview --env dev --test-scheduled",
     "upload": "opennextjs-cloudflare upload",
     "deploy": "opennextjs-cloudflare deploy"
   },
@@ -70,6 +70,7 @@
     "@types/three": "^0.181.0",
     "@typescript/native-preview": "^7.0.0-dev.20251113.1",
     "babel-plugin-react-compiler": "^1.0.0",
+    "better-sqlite3": "^12.4.1",
     "drizzle-kit": "^0.31.7",
     "eslint": "^9.39.1",
     "eslint-config-next": "16.0.1",

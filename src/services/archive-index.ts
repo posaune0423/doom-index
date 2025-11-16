@@ -35,12 +35,7 @@ function toRangeTs(startDate?: string, endDate?: string) {
 }
 
 export type ArchiveIndexService = {
-  listArchive(options: {
-    limit: number;
-    cursor?: string;
-    startDate?: string;
-    endDate?: string;
-  }): Promise<
+  listArchive(options: { limit: number; cursor?: string; startDate?: string; endDate?: string }): Promise<
     Result<
       {
         items: Array<{
@@ -52,6 +47,10 @@ export type ArchiveIndexService = {
           imageUrl: string;
           fileSize: number;
           ts: number;
+          mcRoundedJson: string;
+          visualParamsJson: string;
+          prompt: string;
+          negative: string;
         }>;
         cursor?: string;
         hasMore: boolean;
@@ -113,6 +112,10 @@ export function createArchiveIndexService({ d1Binding }: ArchiveIndexServiceDeps
           imageUrl: archiveItems.imageUrl,
           fileSize: archiveItems.fileSize,
           ts: archiveItems.ts,
+          mcRoundedJson: archiveItems.mcRoundedJson,
+          visualParamsJson: archiveItems.visualParamsJson,
+          prompt: archiveItems.prompt,
+          negative: archiveItems.negative,
         })
         .from(archiveItems)
         .where(whereParts.length ? and(...whereParts) : undefined)
@@ -120,7 +123,8 @@ export function createArchiveIndexService({ d1Binding }: ArchiveIndexServiceDeps
         .limit(limit)
         .all();
 
-      const nextCursor = rows.length > 0 ? encodeCursor({ ts: rows[rows.length - 1].ts, id: rows[rows.length - 1].id }) : undefined;
+      const nextCursor =
+        rows.length > 0 ? encodeCursor({ ts: rows[rows.length - 1].ts, id: rows[rows.length - 1].id }) : undefined;
 
       logger.debug("archive-index.list", {
         limit,

@@ -221,7 +221,11 @@ async function collectPaginatedArchiveItems({
  * Now uses D1 for efficient listing with DESC sorting
  * Falls back to R2 for date-range queries (temporary until D1 is fully populated)
  */
-export function createArchiveListService({ r2Bucket, d1Binding, archiveIndexService }: ArchiveListServiceDeps = {}): ArchiveListService {
+export function createArchiveListService({
+  r2Bucket,
+  d1Binding,
+  archiveIndexService,
+}: ArchiveListServiceDeps = {}): ArchiveListService {
   const bucket = resolveBucketOrThrow({ r2Bucket });
   const indexService = archiveIndexService ?? createArchiveIndexService({ d1Binding });
 
@@ -274,20 +278,46 @@ export function createArchiveListService({ r2Bucket, d1Binding, archiveIndexServ
 
       if (d1Result.isOk()) {
         const d1Data = d1Result.value;
-        
-        const items: ArchiveItem[] = d1Data.items.map(item => ({
-          id: item.id,
-          timestamp: item.timestamp,
-          minuteBucket: item.minuteBucket,
-          paramsHash: item.paramsHash,
-          seed: item.seed,
-          imageUrl: item.imageUrl,
-          fileSize: item.fileSize,
-          mcRounded: {} as McMapRounded,
-          visualParams: {} as VisualParams,
-          prompt: "",
-          negative: "",
-        }));
+
+        const items: ArchiveItem[] = d1Data.items.map(item => {
+          try {
+            const mcRounded = JSON.parse(item.mcRoundedJson) as McMapRounded;
+            const visualParams = JSON.parse(item.visualParamsJson) as VisualParams;
+
+            return {
+              id: item.id,
+              timestamp: item.timestamp,
+              minuteBucket: item.minuteBucket,
+              paramsHash: item.paramsHash,
+              seed: item.seed,
+              imageUrl: item.imageUrl,
+              fileSize: item.fileSize,
+              mcRounded,
+              visualParams,
+              prompt: item.prompt,
+              negative: item.negative,
+            };
+          } catch (error) {
+            logger.error("archive-list.d1-parse-error", {
+              id: item.id,
+              error: error instanceof Error ? error.message : "Unknown error",
+            });
+            // Fallback to empty values if JSON parsing fails
+            return {
+              id: item.id,
+              timestamp: item.timestamp,
+              minuteBucket: item.minuteBucket,
+              paramsHash: item.paramsHash,
+              seed: item.seed,
+              imageUrl: item.imageUrl,
+              fileSize: item.fileSize,
+              mcRounded: {} as McMapRounded,
+              visualParams: {} as VisualParams,
+              prompt: item.prompt,
+              negative: item.negative,
+            };
+          }
+        });
 
         logger.debug("archive-list.d1-query-completed", {
           requestedLimit: limit,

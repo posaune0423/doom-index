@@ -35,8 +35,12 @@ export const archiveRouter = router({
       });
     }
 
-    // Create archive list service
-    const archiveService = createArchiveListService({ r2Bucket: bucketResult.value });
+    // Create archive list service with D1 binding
+    const d1Binding = ctx.env?.DB;
+    const archiveService = createArchiveListService({
+      r2Bucket: bucketResult.value,
+      d1Binding,
+    });
 
     // List images
     const listResult = await archiveService.listImages({
