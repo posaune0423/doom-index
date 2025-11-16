@@ -5,6 +5,8 @@ import type { ArchiveItem, ArchiveMetadata } from "@/types/archive";
 import { isValidArchiveFilename, parseDatePrefix, isArchiveMetadata, buildPublicR2Path } from "@/lib/pure/archive";
 import { logger } from "@/utils/logger";
 import { createArchiveIndexService, type ArchiveIndexService } from "@/services/archive-index";
+import type { McMapRounded } from "@/constants/token";
+import type { VisualParams } from "@/lib/pure/mapping";
 
 type ArchiveListServiceDeps = {
   r2Bucket?: R2Bucket;
