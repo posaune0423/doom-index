@@ -281,8 +281,8 @@ export function createArchiveListService({ r2Bucket, d1Binding, archiveIndexServ
           seed: item.seed,
           imageUrl: item.imageUrl,
           fileSize: item.fileSize,
-          mcRounded: {},
-          visualParams: {},
+          mcRounded: {} as any,
+          visualParams: {} as any,
           prompt: "",
           negative: "",
         }));

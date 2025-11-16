@@ -139,8 +139,8 @@ export function createArchiveIndexService({ d1Binding }: ArchiveIndexServiceDeps
     } catch (error) {
       logger.error("archive-index.list.error", { error });
       return err({
-        type: "StorageError",
-        op: "list",
+        type: "StorageError" as const,
+        op: "list" as const,
         key: "archive_items",
         message: `D1 list failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       });
@@ -180,8 +180,8 @@ export function createArchiveIndexService({ d1Binding }: ArchiveIndexServiceDeps
     } catch (error) {
       logger.error("archive-index.insert.error", { error, id: metadata.id });
       return err({
-        type: "StorageError",
-        op: "insert",
+        type: "StorageError" as const,
+        op: "put" as const,
         key: metadata.id,
         message: `D1 insert failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       });
@@ -221,8 +221,8 @@ export function createArchiveIndexService({ d1Binding }: ArchiveIndexServiceDeps
     } catch (error) {
       logger.error("archive-index.get.error", { error, id });
       return err({
-        type: "StorageError",
-        op: "get",
+        type: "StorageError" as const,
+        op: "get" as const,
         key: id,
         message: `D1 get failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       });

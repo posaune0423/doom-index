@@ -44,7 +44,8 @@ async function backfillArchive() {
       break;
     }
 
-    const { objects, truncated, cursor: nextCursor } = listResult.value;
+    const result = listResult.value;
+    const { objects, truncated } = result;
 
     const webpObjects = objects.filter(obj => {
       const filename = obj.key.split("/").pop() || "";
@@ -103,11 +104,11 @@ async function backfillArchive() {
       }
     }
 
-    if (!truncated || !nextCursor) {
+    if (!truncated) {
       break;
     }
 
-    cursor = nextCursor;
+    cursor = result.cursor;
   }
 
   logger.info("backfill.complete", {
